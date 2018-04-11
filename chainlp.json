@@ -6,7 +6,7 @@
     "depends":  "",
     "homepage":  "http://no722.cocolog-nifty.com/blog/chainlp/",
     "hash":  "43ca67b7691c34bc58ae1eade0c31c49ad3e6ce15d547c7375cb9971e3497e4b",
-    "bin":  "",
+    "bin":  "ChainLP.exe",
 	"shortcuts": [
 		[
 			"ChainLP.exe",
