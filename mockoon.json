@@ -1,0 +1,17 @@
+﻿{
+    "version":  "0.3.0",
+    "license":  "",
+    "extract_dir":  "",
+    "url":  "https://releases.mockoon.com/mockoon.setup.0.3.0.exe#/dl.7z",
+    "depends":  "",
+    "homepage":  "",
+    "hash":  "ba2b7edd940a3363aa6e4e94cb8f536bd605dea750cac2a5a84d54a84e79e982",
+    "bin":  "",
+    "pre_install": "extract_7zip \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+    "shortcuts": [
+        [
+            "Mockoon.exe",
+            "Mockoon"
+        ]
+    ]
+}
