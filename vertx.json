@@ -1,0 +1,10 @@
+﻿{
+    "version":  "3.5.1",
+    "license":  "",
+    "extract_dir":  "vertx",
+    "url":  "https://bintray.com/artifact/download/vertx/downloads/vert.x-3.5.1-full.zip",
+    "depends":  "",
+    "homepage":  "",
+    "hash":  "f71c1adf319346eca8e44af7c34ba7abf68ba227d927baa08fb2344a54ad0638",
+    "bin":  "bin/vertx.bat"
+}
