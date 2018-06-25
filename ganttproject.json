@@ -1,12 +1,12 @@
 ﻿{
-    "version":  "2.8.7",
-    "license":  "",
-    "extract_dir":  "ganttproject-2.8.7-r2262",
-    "url":  "https://dl.ganttproject.biz/ganttproject-2.8.7/ganttproject-2.8.7-r2262.zip",
-    "depends":  "",
-    "homepage":  "",
-    "hash":  "cd7a8d45002f5c47715c3de4eb5914b67e8a8fff1718622f3252442693d43fc7",
-    "bin":  "",
+    "version": "2.8.8",
+    "license": "",
+    "extract_dir": "ganttproject-2.8.8-r2308",
+    "url": "https://dl.ganttproject.biz/ganttproject-2.8.8/ganttproject-2.8.8-r2308.zip",
+    "depends": "",
+    "homepage": "",
+    "hash": "910ef08a7ca00e5a1c7dfd7a5ade16e77679a50fa816d02ff9a4abff500afcf4",
+    "bin": "",
     "shortcuts": [
         [
             "ganttproject.bat",
