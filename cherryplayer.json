@@ -7,6 +7,6 @@
     "hash": "0383420363e94bb13d5aad6557ac5f74d39313d60076df5aab03b5a85105dee6",
     "bin": "CherryPlayer.exe",
     "shortcuts": [
-        ["CherryPlayer", "CherryPlayer.exe"]
+        ["CherryPlayer.exe", "CherryPlayer"]
     ]
 }
