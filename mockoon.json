@@ -1,12 +1,12 @@
 ﻿{
-    "version":  "0.4.0",
-    "license":  "",
-    "extract_dir":  "",
-    "url":  "https://releases.mockoon.com/mockoon.setup.0.4.0.exe#/dl.7z",
-    "depends":  "",
-    "homepage":  "",
-    "hash":  "d48aa3e206f2c5f8ff6de21ff73bb039fbcd77095a52249a315b9d96419ab5c0",
-    "bin":  "",
+    "version": "0.4.0",
+    "license": "",
+    "extract_dir": "",
+    "url": "https://releases.mockoon.com/mockoon.setup.0.4.0.exe#/dl.7z",
+    "depends": "",
+    "homepage": "",
+    "hash": "d48aa3e206f2c5f8ff6de21ff73bb039fbcd77095a52249a315b9d96419ab5c0",
+    "bin": "",
     "pre_install": "extract_7zip \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
     "shortcuts": [
         [
