@@ -1,0 +1,13 @@
+﻿{
+    "version": "2.4.8",
+    "license": "",
+    "extract_dir": "",
+    "url": "http://download.cherryplayer.com/2.4.8/CherryPlayer.zip",
+    "depends": "youtube player",
+    "homepage": "http://cherryplayer.com/",
+    "hash": "0383420363e94bb13d5aad6557ac5f74d39313d60076df5aab03b5a85105dee6",
+    "bin": "CherryPlayer.exe",
+    "shortcuts": [
+        ["CherryPlayer", "CherryPlayer.exe"]
+    ]
+}
