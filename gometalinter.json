@@ -6,5 +6,9 @@
     "depends": "",
     "homepage": "https://github.com/alecthomas/gometalinter",
     "hash": "8a6f26e0ca28ad908d66505203e251ee80a6342fe24a469e8b6ab2d82a89fd76",
-    "bin": "gometalinter.exe"
+    "bin": "gometalinter.exe",
+    "checkver": "github",
+    "autoupdate": {
+        "url": "https://github.com/alecthomas/gometalinter/releases/download/v$version/gometalinter-$version-windows-amd64.zip"
+    }
 }
