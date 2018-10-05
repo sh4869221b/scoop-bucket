@@ -1,11 +1,11 @@
-﻿{
-    "version": "0-84-3",
+{
+    "version": "0-84-6",
     "license": "",
     "extract_dir": "",
-    "url": "https://bitbucket.org/sk_0520/mnmn/downloads/MnMn_0-84-3_x86.zip",
+    "url": "https://bitbucket.org/sk_0520/mnmn/downloads/MnMn_0-84-6_x86.zip",
     "depends": "",
     "homepage": "http://content-type-text.net/",
-    "hash": "67b16106ba0988145f8791050eb7a9c9a111fe3771f5ba7ecba757bf5864b301",
+    "hash": "b9d9eb51d801ea1afc22459d183ff029e27ffe8366b6cecf0dec5e1b8645a9a0",
     "bin": "MnMn.exe",
     "shortcuts": [
         [
