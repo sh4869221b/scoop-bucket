@@ -1,0 +1,7 @@
+﻿{
+    "version":  "nightly",
+    "license":  "",
+    "url":  "http://air.fem.jp/commeon/commeon.zip",
+    "homepage":  "http://air.fem.jp/commeon/",
+    "bin":  "commeon.exe"
+}
