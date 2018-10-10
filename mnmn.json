@@ -1,5 +1,5 @@
-﻿{
-    "version": "0-84-6",
+{
+    "version": "0.84.6",
     "license": "",
     "extract_dir": "",
     "url": "https://bitbucket.org/sk_0520/mnmn/downloads/MnMn_0-84-6_x86.zip",
@@ -16,9 +16,9 @@
     "checkver": {
         "url": "https://bitbucket.org/sk_0520/mnmn/downloads/",
         "re": "MnMn_(?<major>[\\d])-(?<miner>[\\d]+)-(?<patch>[\\d])_x86.zip",
-        "replace": "${major}-${miner}-${patch}"
+        "replace": "${major}.${miner}.${patch}"
     },
     "autoupdate": {
-        "url": "https://bitbucket.org/sk_0520/mnmn/downloads/MnMn_$version_x86.zip"
+        "url": "https://bitbucket.org/sk_0520/mnmn/downloads/MnMn_$dashVersion_x86.zip"
     }
 }
