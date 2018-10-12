@@ -3,6 +3,9 @@
 		"Mockoon",
 		"PLUGINSDIR",
 		"Recurse",
-		"copyq"
+		"commeon",
+		"copyq",
+		"ganttproject",
+		"glassfish"
 	]
 }
