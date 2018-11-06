@@ -1,11 +1,11 @@
 {
-    "version": "3.6.1",
+    "version": "3.7.0",
     "license": "GPL-3.0",
-    "extract_dir": "copyq-v3.6.1",
-    "url": "https://github.com/hluk/CopyQ/releases/download/v3.6.1/copyq-v3.6.1.zip",
+    "extract_dir": "copyq-v3.7.0",
+    "url": "https://github.com/hluk/CopyQ/releases/download/v3.7.0/copyq-v3.7.0.zip",
     "depends": "",
     "homepage": "https://hluk.github.io/CopyQ/",
-    "hash": "14b9fbf5c9521e241b647a76ea2cd1590b7d29cdaed6fd4dc73f35dc006a8708",
+    "hash": "dee0dd2829226003a865579c18e515d629b0f121f9af802933a67b599471f65b",
     "bin": "copyq.exe",
     "shortcuts": [
         [
