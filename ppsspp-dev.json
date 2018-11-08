@@ -11,13 +11,13 @@
             "bin": [
                 [
                     "PPSSPPWindows64.exe",
-                    "ppsspp"
+                    "ppsspp-dev"
                 ]
             ],
             "shortcuts": [
                 [
                     "PPSSPPWindows64.exe",
-                    "PPSSPP"
+                    "PPSSPP-DEV"
                 ]
             ]
         },
@@ -27,13 +27,13 @@
             "bin": [
                 [
                     "PPSSPPWindows.exe",
-                    "ppsspp"
+                    "ppsspp-dev"
                 ]
             ],
             "shortcuts": [
                 [
                     "PPSSPPWindows.exe",
-                    "PPSSPP"
+                    "PPSSPP-DEV"
                 ]
             ]
         }
