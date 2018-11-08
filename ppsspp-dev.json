@@ -1,0 +1,55 @@
+{
+    "version": "1.7.1-125",
+    "license": "GPL-2.0-only",
+    "homepage": "https://www.ppsspp.org",
+    "extract_dir": "ppsspp",
+    "post_install": "Remove-Item \"$dir\\demos\" -Recurse",
+    "architecture": {
+        "64bit": {
+            "url": "https://buildbot.orphis.net/ppsspp/index.php?m=dl&rev=v1.7.1-125-g99867addb&platform=windows-amd64#/dl.7z",
+            "hash": "6ffb4da9375017c2102792dece7f9b0a6b26f2bb216e4d969a758ec5edd135d0",
+            "bin": [
+                [
+                    "PPSSPPWindows64.exe",
+                    "ppsspp"
+                ]
+            ],
+            "shortcuts": [
+                [
+                    "PPSSPPWindows64.exe",
+                    "PPSSPP"
+                ]
+            ]
+        },
+        "32bit": {
+            "url": "https://buildbot.orphis.net/ppsspp/index.php?m=dl&rev=v1.7.1-125-g99867addb&platform=windows-x86#/dl.7z",
+            "hash": "222a29e7dfb63e2a0f7b0140ec69a8f4822dcb5b09536bf316b836ccc043cd5a",
+            "bin": [
+                [
+                    "PPSSPPWindows.exe",
+                    "ppsspp"
+                ]
+            ],
+            "shortcuts": [
+                [
+                    "PPSSPPWindows.exe",
+                    "PPSSPP"
+                ]
+            ]
+        }
+    },
+    "checkver": {
+        "url": "https://buildbot.orphis.net/ppsspp/index.php?m=fulllist",
+        "re": "v(\\d+\\.\\d+\\.\\d+-\\d+)-(?<rev>[\\d\\w]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://buildbot.orphis.net/ppsspp/index.php?m=dl&rev=v$version-$matchRev&platform=windows-amd64#/dl.7z"
+            },
+            "32bit": {
+                "url": "https://buildbot.orphis.net/ppsspp/index.php?m=dl&rev=v$version-$matchRev&platform=windows-x86#/dl.7z"
+            }
+        }
+    }
+}
