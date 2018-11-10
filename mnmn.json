@@ -15,7 +15,7 @@
     ],
     "checkver": {
         "url": "https://bitbucket.org/sk_0520/mnmn/downloads/",
-        "re": "MnMn_(?<major>[\\d])-(?<miner>[\\d]+)-(?<patch>[\\d])_x86.zip",
+        "re": "MnMn_(?<major>[\\d]+)-(?<miner>[\\d]+)-(?<patch>[\\d]+)_x86.zip",
         "replace": "${major}.${miner}.${patch}"
     },
     "autoupdate": {
