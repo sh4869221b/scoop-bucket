@@ -6,7 +6,7 @@
     "url": "http://download.virtualbox.org/virtualbox/5.2.22/VirtualBox-5.2.22-126460-Win.exe#/VBoxSetup.exe",
     "hash": "0c1a8f1de1c5bd18b00d81419f8190660ff36c9a5fddae4ed2c6a2216581d521",
     "installer": {
-        "script": "Start-Process cmd -Verb Runas \"/c $dir\\VBoxSetup.exe --msiparams INSTALLDIR=$dir VBOX_START=0 REBOOT=ReallySuppress --silent\" -Wait"
+        "script": "Start-Process cmd -Verb Runas \"/c $dir\\VBoxSetup.exe --msiparams INSTALLDIR=$dir VBOX_START=0 REBOOT=ReallySuppress --silent\" -Wait -WindowStyle hidden"
     },
     "post_install": "remove-item \"$dir\\VBoxSetup.exe\"",
     "uninstaller": {
