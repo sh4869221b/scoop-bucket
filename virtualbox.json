@@ -11,8 +11,7 @@
     "post_install": "remove-item \"$dir\\VBoxSetup.exe\"",
     "uninstaller": {
         "script": [
-            "$id = wmic product where \"\"\"name like 'Oracle VM VirtualBox%'\"\"\" get IdentifyingNumber | find /i \"\"\"-\"\"\"",
-            "Start-Process cmd -Verb Runas \"/c msiexec /x $id /qn\" -Wait -WindowStyle hidden"
+           "Start-Process cmd -Verb Runas \"/c msiexec /x $dir\\VirtualBox.exe /qn\" -Wait -WindowStyle hidden"
         ]
     },
     "bin": "VBoxManage.exe",
