@@ -1,7 +1,15 @@
-﻿{
-    "version": "nightly",
+{
+    "version": "1.6.1.3",
     "license": "",
     "url": "http://air.fem.jp/commeon/commeon.zip",
     "homepage": "http://air.fem.jp/commeon/",
-    "bin": "commeon.exe"
+    "hash": "fda92331163c1124dfd0cd6892c4ad3ac49fedfaea7803fe7dc3e21158416879",
+    "bin": "commeon.exe",
+    "checkver": {
+        "url": "http://air.fem.jp/commeon/",
+        "re": "commeon ver\\. (\\d+\\.\\d+\\.\\d+\\.\\d+)"
+    },
+    "autoupdate": {
+        "url": "http://air.fem.jp/commeon/commeon.zip"
+    }
 }
