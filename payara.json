@@ -1,11 +1,11 @@
 {
-    "version": "5.183",
+    "version": "5.184",
     "license": "",
     "extract_dir": "payara5",
-    "url": "https://s3-eu-west-1.amazonaws.com/payara.fish/Payara+Downloads/5.183/payara-5.183.zip",
+    "url": "https://s3-eu-west-1.amazonaws.com/payara.fish/Payara+Downloads/5.184/payara-5.184.zip",
     "depends": "",
     "homepage": "",
-    "hash": "2940a780c781643f5bc3044658e935443e5d51d96e2ee62bac4baefa7e6122df",
+    "hash": "e27efd6fb3752d870349848ee7f5edcace947148d415f60a217dc0e0fe6ced94",
     "checkver": {
         "url": "https://www.payara.fish/software/release-notes/",
         "re": "Payara Server (\\d+\\.\\d+)"
