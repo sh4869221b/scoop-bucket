@@ -1,10 +1,10 @@
 {
-    "version": "0.38.0",
+    "version": "0.39.0",
     "license": "MIT",
-    "url": "https://github.com/stripe/stripe-mock/releases/download/v0.38.0/stripe-mock_0.38.0_windows_amd64.tar.gz",
+    "url": "https://github.com/stripe/stripe-mock/releases/download/v0.39.0/stripe-mock_0.39.0_windows_amd64.tar.gz",
     "depends": "",
     "homepage": "https://github.com/stripe/stripe-mock",
-    "hash": "ce28d5cef101ce7a930e90fe30ed3280be18d4bc6a79c09609c9b4e8edf10cb5",
+    "hash": "ee993ef3cbe2d402bed7936a184cbc003eb4f27c975c35d2b6a6b230d1be23be",
     "bin": "stripe-mock.exe",
     "checkver": {
         "github": "https://github.com/stripe/stripe-mock"
