@@ -8,7 +8,7 @@
     "hash": "e27efd6fb3752d870349848ee7f5edcace947148d415f60a217dc0e0fe6ced94",
     "checkver": {
         "url": "https://www.payara.fish/software/release-notes/",
-        "re": "Payara Server (\\d+\\.\\d+)"
+        "re": "Payara Platform (\\d+\\.\\d+)"
     },
     "autoupdate": {
         "url": "https://s3-eu-west-1.amazonaws.com/payara.fish/Payara+Downloads/$version/payara-$version.zip"
