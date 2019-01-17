@@ -1,13 +1,13 @@
 {
-    "version": "1.7.5-345",
+    "version": "1.7.5-368",
     "license": "GPL-2.0-only",
     "homepage": "https://www.ppsspp.org",
     "extract_dir": "ppsspp",
     "post_install": "Remove-Item \"$dir\\demos\" -Recurse",
     "architecture": {
         "64bit": {
-            "url": "https://buildbot.orphis.net/ppsspp/index.php?m=dl&rev=v1.7.5-345-g12e54baeb&platform=windows-amd64#/dl.7z",
-            "hash": "584051cc69b367b48ca20738cb5ee82a66280bae46196658a7b7c4909d7040d0",
+            "url": "https://buildbot.orphis.net/ppsspp/index.php?m=dl&rev=v1.7.5-368-g90a45deab&platform=windows-amd64#/dl.7z",
+            "hash": "84588680ddfed81bd5991ac853153305394edde58963d4e6f7580c9dbf9c464e",
             "bin": [
                 [
                     "PPSSPPWindows64.exe",
@@ -22,8 +22,8 @@
             ]
         },
         "32bit": {
-            "url": "https://buildbot.orphis.net/ppsspp/index.php?m=dl&rev=v1.7.5-345-g12e54baeb&platform=windows-x86#/dl.7z",
-            "hash": "52205d1e62d4e5bc73af1f91fd00d503cac9105e57b336235ddf73a0aac8d258",
+            "url": "https://buildbot.orphis.net/ppsspp/index.php?m=dl&rev=v1.7.5-368-g90a45deab&platform=windows-x86#/dl.7z",
+            "hash": "d6ee6c31b0ca8d65d6faaab0124f5910522b2bdf9d2d9ee62bcfb8ccb26f805b",
             "bin": [
                 [
                     "PPSSPPWindows.exe",
