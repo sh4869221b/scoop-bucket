@@ -3,7 +3,7 @@
     "license": "",
     "url": "http://air.fem.jp/commeon/commeon.zip",
     "homepage": "http://air.fem.jp/commeon/",
-    "hash": "2a24499a2bd6e5819b6095d0e313af83700eb8cfb148b26a3a4fa26a75040089",
+    "hash": "ab7af474a7e2214ca16ded73647830271cc5d95e9cfaa6eaca32abfff8de60af",
     "bin": "commeon.exe",
     "checkver": {
         "url": "http://air.fem.jp/commeon/",
