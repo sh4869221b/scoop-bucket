@@ -5,6 +5,12 @@
     "homepage": "http://air.fem.jp/commeon/",
     "hash": "05139f7876f62bf7f25fdd9d31862ea5cfe23f30a50f77d0335412c7cc0089db",
     "bin": "commeon.exe",
+    "shortcuts": [
+                [
+                    "commeon.exe",
+                    "commeon"
+                ]
+            ],
     "checkver": {
         "url": "http://air.fem.jp/commeon/",
         "re": "commeon ver\\. (\\d+\\.\\d+\\.\\d+\\.\\d+)"
