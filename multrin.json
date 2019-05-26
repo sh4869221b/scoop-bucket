@@ -1,11 +1,11 @@
 {
-    "version": "0.3.1",
+    "version": "0.3.2",
     "license": "GPL-3.0",
     "extract_dir": "",
-    "url": "https://github.com/sentialx/multrin/releases/download/v0.3.1/Multrin-0.3.1-win.zip",
+    "url": "https://github.com/sentialx/multrin/releases/download/v0.3.2/Multrin-0.3.2-win.zip",
     "depends": "",
     "homepage": "https://github.com/sentialx/multrin",
-    "hash": "ca84574c7049420b0869a6a6f28e6c6360e4ddcb9747b1598080c3ecd3288f76",
+    "hash": "cd2e73921d515754287371d9b5377eae9986c12d45e5a12a4e229f158182304f",
     "shortcuts": [
         [
             "Multrin.exe",
