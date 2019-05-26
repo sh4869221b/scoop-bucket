@@ -1,7 +1,7 @@
 {
     "version": "1.10.1",
     "license": "Apache-2.0",
-    "extract_dir": "Min-win32-x64",
+    "extract_dir": "Min-v1.10.1",
     "url": "https://github.com/minbrowser/min/releases/download/v1.10.1/Min-v1.10.1-win32-x64.zip",
     "depends": "",
     "homepage": "https://minbrowser.github.io/min",
@@ -17,6 +17,7 @@
         "github": "https://github.com/minbrowser/min"
     },
     "autoupdate": {
+        "extract_dir": "Min-v$version",
         "url": "https://github.com/minbrowser/min/releases/download/v$version/Min-v$version-win32-x64.zip"
     }
 }
