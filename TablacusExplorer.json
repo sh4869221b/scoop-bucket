@@ -1,0 +1,20 @@
+{
+    "version": "19.6.8",
+    "license": "MIT",
+    "url": "https://github.com/tablacus/TablacusExplorer/releases/download/19.6.8/te190608.zip",
+    "homepage": "https://tablacus.github.io/explorer_en.html",
+    "hash": "cabfb5b9a9d773ca5b5af897aef6bfd55e2aaa0e6e261002995cce5d648e7813",
+    "shortcuts": [
+        [
+            "TE64.exe",
+            "TablacusExplorer"
+        ]
+    ],
+    "checkver": {
+        "url": "https://github.com/tablacus/TablacusExplorer/releases",
+        "re": "/(?<version>[\\d.]+)/te(?<file>[\\d]+).zip"
+    },
+    "autoupdate": {
+        "url": "https://github.com/tablacus/TablacusExplorer/releases/download/$version/te$matchFile.zip"
+    }
+}
