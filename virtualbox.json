@@ -1,32 +1,27 @@
 {
-    "homepage": "https://www.virtualbox.org/",
-    "description": "Powerful x86 and AMD64/Intel64 virtualization product for enterprise as well as home use.",
-    "license": "GPL-2.0-only",
-    "version": "6.0.12",
-    "url": "http://download.virtualbox.org/virtualbox/6.0.12/VirtualBox-6.0.12-133076-Win.exe#/VBoxSetup.exe",
-    "hash": "2780be12c139858412e789ed01700ea9041522a7b5fad2a27923f30c850f0198",
-    "installer": {
-        "script": "Start-Process cmd -Verb Runas \"/c $dir\\VBoxSetup.exe --msiparams INSTALLDIR=$dir VBOX_START=0 REBOOT=ReallySuppress --silent\" -Wait -WindowStyle hidden"
-    },
-    "post_install": "remove-item \"$dir\\VBoxSetup.exe\"",
-    "uninstaller": {
-        "script": "Start-Process cmd -Verb Runas \"/c msiexec /x $dir\\VirtualBox.exe /qn\" -Wait -WindowStyle hidden"
-    },
-    "bin": "VBoxManage.exe",
-    "shortcuts": [
-        [
-            "VirtualBox.exe",
-            "Oracle VM VirtualBox"
-        ]
-    ],
-    "checkver": {
-        "url": "https://update.virtualbox.org/query.php?platform=WINDOWS_64BITS_GENERIC&version=0.0.0",
-        "re": "VirtualBox-(?<version>[\\d.]+)-(?<revision>[\\d]+)-Win.exe"
-    },
-    "autoupdate": {
-        "url": "http://download.virtualbox.org/virtualbox/$version/VirtualBox-$version-$matchRevision-Win.exe#/VBoxSetup.exe",
-        "hash": {
-            "url": "https://www.virtualbox.org/download/hashes/$version/SHA256SUMS"
-        }
+  "homepage": "https://www.virtualbox.org/",
+  "description": "Powerful x86 and AMD64/Intel64 virtualization product for enterprise as well as home use.",
+  "license": "GPL-2.0-only",
+  "version": "6.0.12",
+  "url": "http://download.virtualbox.org/virtualbox/6.0.12/VirtualBox-6.0.12-133076-Win.exe#/VBoxSetup.exe",
+  "hash": "2780be12c139858412e789ed01700ea9041522a7b5fad2a27923f30c850f0198",
+  "installer": {
+    "script": "Start-Process cmd -Verb Runas \"/c $dir\\VBoxSetup.exe --msiparams INSTALLDIR=$dir VBOX_START=0 REBOOT=ReallySuppress --silent\" -Wait -WindowStyle hidden"
+  },
+  "post_install": "remove-item \"$dir\\VBoxSetup.exe\"",
+  "uninstaller": {
+    "script": "Start-Process cmd -Verb Runas \"/c msiexec /x $dir\\VirtualBox.exe /qn\" -Wait -WindowStyle hidden"
+  },
+  "bin": "VBoxManage.exe",
+  "shortcuts": [["VirtualBox.exe", "Oracle VM VirtualBox"]],
+  "checkver": {
+    "url": "https://update.virtualbox.org/query.php?platform=WINDOWS_64BITS_GENERIC&version=0.0.0",
+    "re": "VirtualBox-(?<version>[\\d.]+)-(?<revision>[\\d]+)-Win.exe"
+  },
+  "autoupdate": {
+    "url": "http://download.virtualbox.org/virtualbox/$version/VirtualBox-$version-$matchRevision-Win.exe#/VBoxSetup.exe",
+    "hash": {
+      "url": "https://www.virtualbox.org/download/hashes/$version/SHA256SUMS"
     }
+  }
 }

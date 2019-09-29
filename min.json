@@ -1,23 +1,18 @@
 {
-    "version": "1.11.1",
-    "license": "Apache-2.0",
-    "extract_dir": "Min-v1.11.1",
-    "url": "https://github.com/minbrowser/min/releases/download/v1.11.1/Min-v1.11.1-win32-x64.zip",
-    "depends": "",
-    "homepage": "https://minbrowser.github.io/min",
-    "hash": "a1d920d9debab2fc496f1e9cdd6e6d9a0fd558a9044084f6598e8078b60f870c",
-    "bin": "",
-    "shortcuts": [
-        [
-            "Min.exe",
-            "Min Browser"
-        ]
-    ],
-    "checkver": {
-        "github": "https://github.com/minbrowser/min"
-    },
-    "autoupdate": {
-        "extract_dir": "Min-v$version",
-        "url": "https://github.com/minbrowser/min/releases/download/v$version/Min-v$version-win32-x64.zip"
-    }
+  "version": "1.11.1",
+  "license": "Apache-2.0",
+  "extract_dir": "Min-v1.11.1",
+  "url": "https://github.com/minbrowser/min/releases/download/v1.11.1/Min-v1.11.1-win32-x64.zip",
+  "depends": "",
+  "homepage": "https://minbrowser.github.io/min",
+  "hash": "a1d920d9debab2fc496f1e9cdd6e6d9a0fd558a9044084f6598e8078b60f870c",
+  "bin": "",
+  "shortcuts": [["Min.exe", "Min Browser"]],
+  "checkver": {
+    "github": "https://github.com/minbrowser/min"
+  },
+  "autoupdate": {
+    "extract_dir": "Min-v$version",
+    "url": "https://github.com/minbrowser/min/releases/download/v$version/Min-v$version-win32-x64.zip"
+  }
 }

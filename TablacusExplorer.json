@@ -1,20 +1,15 @@
 {
-    "version": "19.9.6",
-    "license": "MIT",
-    "url": "https://github.com/tablacus/TablacusExplorer/releases/download/19.9.6/te190906.zip",
-    "homepage": "https://tablacus.github.io/explorer_en.html",
-    "hash": "429a0c02add5125983650980d707a71c58f7a36172e62717dee5d47cbfc7fbc6",
-    "shortcuts": [
-        [
-            "TE64.exe",
-            "TablacusExplorer"
-        ]
-    ],
-    "checkver": {
-        "url": "https://github.com/tablacus/TablacusExplorer/releases",
-        "re": "/(?<version>[\\d.]+)/te(?<file>[\\d]+).zip"
-    },
-    "autoupdate": {
-        "url": "https://github.com/tablacus/TablacusExplorer/releases/download/$version/te$matchFile.zip"
-    }
+  "version": "19.9.6",
+  "license": "MIT",
+  "url": "https://github.com/tablacus/TablacusExplorer/releases/download/19.9.6/te190906.zip",
+  "homepage": "https://tablacus.github.io/explorer_en.html",
+  "hash": "429a0c02add5125983650980d707a71c58f7a36172e62717dee5d47cbfc7fbc6",
+  "shortcuts": [["TE64.exe", "TablacusExplorer"]],
+  "checkver": {
+    "url": "https://github.com/tablacus/TablacusExplorer/releases",
+    "re": "/(?<version>[\\d.]+)/te(?<file>[\\d]+).zip"
+  },
+  "autoupdate": {
+    "url": "https://github.com/tablacus/TablacusExplorer/releases/download/$version/te$matchFile.zip"
+  }
 }
