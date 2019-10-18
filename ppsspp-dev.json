@@ -1,36 +1,56 @@
 {
-  "version": "1.9.3-68",
-  "license": "GPL-2.0-only",
-  "homepage": "https://www.ppsspp.org",
-  "extract_dir": "ppsspp",
-  "post_install": "Remove-Item \"$dir\\demos\" -Recurse",
-  "persist": "memstick",
-  "architecture": {
-    "64bit": {
-      "url": "https://buildbot.orphis.net/ppsspp/index.php?m=dl&rev=v1.9.3-68-g94339b228&platform=windows-amd64#/dl.7z",
-      "hash": "d7449f0bc0a2241ad96380f0bb443664331b418e7d601d81e24d2dd65ae2b5b9",
-      "bin": [["PPSSPPWindows64.exe", "ppsspp-dev"]],
-      "shortcuts": [["PPSSPPWindows64.exe", "PPSSPP-DEV"]]
-    },
-    "32bit": {
-      "url": "https://buildbot.orphis.net/ppsspp/index.php?m=dl&rev=v1.9.3-68-g94339b228&platform=windows-x86#/dl.7z",
-      "hash": "f27ed608238a8357d8f441acb51119985d73586a298d7eba313811c1b9e23235",
-      "bin": [["PPSSPPWindows.exe", "ppsspp-dev"]],
-      "shortcuts": [["PPSSPPWindows.exe", "PPSSPP-DEV"]]
-    }
-  },
-  "checkver": {
-    "url": "https://buildbot.orphis.net/ppsspp/index.php?m=fulllist",
-    "re": "v(\\d+\\.\\d+\\.\\d+-\\d+)-(?<rev>[\\d\\w]+)"
-  },
-  "autoupdate": {
+    "version": "1.9.3-82",
+    "license": "GPL-2.0-only",
+    "homepage": "https://www.ppsspp.org",
+    "extract_dir": "ppsspp",
+    "post_install": "Remove-Item \"$dir\\demos\" -Recurse",
+    "persist": "memstick",
     "architecture": {
-      "64bit": {
-        "url": "https://buildbot.orphis.net/ppsspp/index.php?m=dl&rev=v$version-$matchRev&platform=windows-amd64#/dl.7z"
-      },
-      "32bit": {
-        "url": "https://buildbot.orphis.net/ppsspp/index.php?m=dl&rev=v$version-$matchRev&platform=windows-x86#/dl.7z"
-      }
+        "64bit": {
+            "url": "https://buildbot.orphis.net/ppsspp/index.php?m=dl&rev=v1.9.3-82-g90e91e24b&platform=windows-amd64#/dl.7z",
+            "hash": "0eb1f93892e99d21717bcc47f3810f5a839f6bf50df371d817a236fa542477f3",
+            "bin": [
+                [
+                    "PPSSPPWindows64.exe",
+                    "ppsspp-dev"
+                ]
+            ],
+            "shortcuts": [
+                [
+                    "PPSSPPWindows64.exe",
+                    "PPSSPP-DEV"
+                ]
+            ]
+        },
+        "32bit": {
+            "url": "https://buildbot.orphis.net/ppsspp/index.php?m=dl&rev=v1.9.3-82-g90e91e24b&platform=windows-x86#/dl.7z",
+            "hash": "4108dddc261d77e75f87f5d263ddb347e8b0f13107995e2525189e9bfa0d95bb",
+            "bin": [
+                [
+                    "PPSSPPWindows.exe",
+                    "ppsspp-dev"
+                ]
+            ],
+            "shortcuts": [
+                [
+                    "PPSSPPWindows.exe",
+                    "PPSSPP-DEV"
+                ]
+            ]
+        }
+    },
+    "checkver": {
+        "url": "https://buildbot.orphis.net/ppsspp/index.php?m=fulllist",
+        "re": "v(\\d+\\.\\d+\\.\\d+-\\d+)-(?<rev>[\\d\\w]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://buildbot.orphis.net/ppsspp/index.php?m=dl&rev=v$version-$matchRev&platform=windows-amd64#/dl.7z"
+            },
+            "32bit": {
+                "url": "https://buildbot.orphis.net/ppsspp/index.php?m=dl&rev=v$version-$matchRev&platform=windows-x86#/dl.7z"
+            }
+        }
     }
-  }
 }
