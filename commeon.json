@@ -1,16 +1,21 @@
 {
-  "version": "1.6.8.4",
-  "license": "",
-  "url": "http://air.fem.jp/commeon/commeon.zip",
-  "homepage": "http://air.fem.jp/commeon/",
-  "hash": "8d0ab0b46bbc8d44e2886e1c8622d017c21e49f15d905ff856eff2b0aeb0d33f",
-  "bin": "commeon.exe",
-  "shortcuts": [["commeon.exe", "commeon"]],
-  "checkver": {
-    "url": "http://air.fem.jp/commeon/",
-    "re": "commeon ver\\. (\\d+\\.\\d+\\.\\d+\\.\\d+)"
-  },
-  "autoupdate": {
-    "url": "http://air.fem.jp/commeon/commeon.zip"
-  }
+    "version": "1.6.8.6",
+    "license": "",
+    "url": "http://air.fem.jp/commeon/commeon.zip",
+    "homepage": "http://air.fem.jp/commeon/",
+    "hash": "30176976d5268835bceef3cbfc5319663a5af851b1a8316dd623d163f592ede8",
+    "bin": "commeon.exe",
+    "shortcuts": [
+        [
+            "commeon.exe",
+            "commeon"
+        ]
+    ],
+    "checkver": {
+        "url": "http://air.fem.jp/commeon/",
+        "re": "commeon ver\\. (\\d+\\.\\d+\\.\\d+\\.\\d+)"
+    },
+    "autoupdate": {
+        "url": "http://air.fem.jp/commeon/commeon.zip"
+    }
 }
