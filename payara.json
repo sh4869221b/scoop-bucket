@@ -1,16 +1,16 @@
 {
-  "version": "5.193",
-  "license": "",
-  "extract_dir": "payara5",
-  "url": "https://s3-eu-west-1.amazonaws.com/payara.fish/Payara+Downloads/5.193/payara-5.193.zip",
-  "depends": "",
-  "homepage": "",
-  "hash": "3726542770c5745fad8c842dc91d6c390199580b929519660eb3996e070db9fe",
-  "checkver": {
-    "url": "https://www.payara.fish/software/release-notes/",
-    "re": "Payara Platform (\\d+\\.\\d+)"
-  },
-  "autoupdate": {
-    "url": "https://s3-eu-west-1.amazonaws.com/payara.fish/Payara+Downloads/$version/payara-$version.zip"
-  }
+    "version": "5.194",
+    "license": "",
+    "extract_dir": "payara5",
+    "url": "https://s3-eu-west-1.amazonaws.com/payara.fish/Payara+Downloads/5.194/payara-5.194.zip",
+    "depends": "",
+    "homepage": "",
+    "hash": "07f0fc72a0134e67cf251ff4b726bdaae263184d16c879d8e73516a50c8a9d87",
+    "checkver": {
+        "url": "https://www.payara.fish/software/release-notes/",
+        "re": "Payara Platform (\\d+\\.\\d+)"
+    },
+    "autoupdate": {
+        "url": "https://s3-eu-west-1.amazonaws.com/payara.fish/Payara+Downloads/$version/payara-$version.zip"
+    }
 }
