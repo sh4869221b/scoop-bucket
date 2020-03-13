@@ -1,23 +1,28 @@
 {
-  "version": "0.8.8",
-  "license": "MIT",
-  "extract_dir": "",
-  "url": "https://github.com/beakerbrowser/beaker/releases/download/0.8.8/beaker-browser-setup-0.8.8.exe#/dl.7z",
-  "depends": "",
-  "homepage": "https://beakerbrowser.com/",
-  "hash": "6662842f36e3d4e5e52aa8ca209d6727850a97831980214ed749829409a2d886",
-  "bin": "",
-  "pre_install": "extract_7zip \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
-  "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse",
-  "shortcuts": [["Beaker Browser.exe", "Beaker Browser"]],
-  "checkver": {
-    "github": "https://github.com/beakerbrowser/beaker"
-  },
-  "autoupdate": {
-    "url": "https://github.com/beakerbrowser/beaker/releases/download/$version/beaker-browser-setup-$version.exe#/dl.7z",
-    "hash": {
-      "url": "$baseurl/latest.yml",
-      "find": "sha2:\\s([a-fA-F0-9]{64})"
+    "version": "0.8.9",
+    "license": "MIT",
+    "extract_dir": "",
+    "url": "https://github.com/beakerbrowser/beaker/releases/download/0.8.9/beaker-browser-setup-0.8.9.exe#/dl.7z",
+    "depends": "",
+    "homepage": "https://beakerbrowser.com/",
+    "hash": "48ecaed9f142da5ecfed357551b6f62b9f62f534493c5c7ebd1f73f71f122775",
+    "bin": "",
+    "pre_install": "extract_7zip \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse",
+    "shortcuts": [
+        [
+            "Beaker Browser.exe",
+            "Beaker Browser"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/beakerbrowser/beaker"
+    },
+    "autoupdate": {
+        "url": "https://github.com/beakerbrowser/beaker/releases/download/$version/beaker-browser-setup-$version.exe#/dl.7z",
+        "hash": {
+            "url": "$baseurl/latest.yml",
+            "find": "sha2:\\s([a-fA-F0-9]{64})"
+        }
     }
-  }
 }
