@@ -1,9 +1,9 @@
 {
-    "version": "20.4.3",
+    "version": "20.4.4",
     "license": "MIT",
-    "url": "https://github.com/tablacus/TablacusExplorer/releases/download/20.4.3/te200403.zip",
+    "url": "https://github.com/tablacus/TablacusExplorer/releases/download/20.4.4/te200404.zip",
     "homepage": "https://tablacus.github.io/explorer_en.html",
-    "hash": "fd25c4d87415ded88c7174c556ed8a0f16bd195c81ce08c03ec996ae29fdc878",
+    "hash": "bef0e83f1a31e8fc4e88bfb94d9dc1d646183a01cb00ceba61be83cd98055a3f",
     "shortcuts": [
         [
             "TE64.exe",
