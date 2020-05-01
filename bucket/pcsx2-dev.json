@@ -11,7 +11,10 @@
         "sstates",
         "snaps",
         "bios",
-        "memcards"
+        "memcards",
+        "inis",
+        "cheats_ws",
+        "portable.ini"
     ],
     "shortcuts": [
         [
