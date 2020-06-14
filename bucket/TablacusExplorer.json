@@ -1,9 +1,9 @@
 {
-    "version": "20.6.12",
+    "version": "20.6.13",
     "license": "MIT",
-    "url": "https://github.com/tablacus/TablacusExplorer/releases/download/20.6.12/te200612.zip",
+    "url": "https://github.com/tablacus/TablacusExplorer/releases/download/20.6.13/te200613.zip",
     "homepage": "https://tablacus.github.io/explorer_en.html",
-    "hash": "674211efec95ea1f5b6830b4d7765c52493a4d5df2fa09ba5dc4bb9bdeec8529",
+    "hash": "f99c8d093c639f023a89bf44daf4f4262cea87b978ecaa3512fcbf453932232e",
     "shortcuts": [
         [
             "TE64.exe",
