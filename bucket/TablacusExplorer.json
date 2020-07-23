@@ -1,9 +1,9 @@
 {
-    "version": "20.7.19",
+    "version": "20.7.22",
     "license": "MIT",
-    "url": "https://github.com/tablacus/TablacusExplorer/releases/download/20.7.19/te200719.zip",
+    "url": "https://github.com/tablacus/TablacusExplorer/releases/download/20.7.22/te200722.zip",
     "homepage": "https://tablacus.github.io/explorer_en.html",
-    "hash": "225d4be1b25efe82187bda8ecfc4574cff8eba36359cfdc2a9f531b21a69403e",
+    "hash": "7bf50c4e041be78eeecdcf4b856bafe4f8080200d5c401cc35369605cd142444",
     "shortcuts": [
         [
             "TE64.exe",
