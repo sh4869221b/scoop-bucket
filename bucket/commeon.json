@@ -1,9 +1,9 @@
 {
-    "version": "1.7.3.0",
+    "version": "1.7.3.1",
     "license": "",
     "url": "http://air.fem.jp/commeon/commeon.zip",
     "homepage": "http://air.fem.jp/commeon/",
-    "hash": "5be6991f9968dc77c6bca11a97947dce2e9e82d008af714d1f84f8be385e1240",
+    "hash": "94e145139e8929c753277fe467c9c7168ae1aaae890f4c15a3ca09a55f2f7b36",
     "bin": "commeon.exe",
     "shortcuts": [
         [
