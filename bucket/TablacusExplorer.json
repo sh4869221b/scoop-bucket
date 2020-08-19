@@ -1,6 +1,12 @@
 {
     "version": "20.8.19",
     "license": "MIT",
+    "persist": [
+        "addons",
+        "config",
+        "init",
+        "layout"
+    ],
     "url": "https://github.com/tablacus/TablacusExplorer/releases/download/20.8.19/te200819.zip",
     "homepage": "https://tablacus.github.io/explorer_en.html",
     "hash": "ae4fc3b67b344e5dade38907736bed73065f55b56acc3f34b3fb39f9cda1303f",
