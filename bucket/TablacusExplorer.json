@@ -1,5 +1,5 @@
 {
-    "version": "20.12.10",
+    "version": "20.12.11",
     "license": "MIT",
     "persist": [
         "addons",
@@ -7,9 +7,9 @@
         "init",
         "layout"
     ],
-    "url": "https://github.com/tablacus/TablacusExplorer/releases/download/20.12.10/te201210.zip",
+    "url": "https://github.com/tablacus/TablacusExplorer/releases/download/20.12.11/te201211.zip",
     "homepage": "https://tablacus.github.io/explorer_en.html",
-    "hash": "7770fa0248458c893f2da0565f9821afb50c2c189122a897a3ea3c7d6b5ec9ae",
+    "hash": "83e21ba2986a16b71c14753921c3f151d86d281f2a1feab5e2a54f15b81e9333",
     "shortcuts": [
         [
             "TE64.exe",
