@@ -1,5 +1,5 @@
 {
-    "version": "21.1.24",
+    "version": "21.1.27",
     "license": "MIT",
     "persist": [
         "addons",
@@ -7,9 +7,9 @@
         "init",
         "layout"
     ],
-    "url": "https://github.com/tablacus/TablacusExplorer/releases/download/21.1.24/te210124.zip",
+    "url": "https://github.com/tablacus/TablacusExplorer/releases/download/21.1.27/te210127.zip",
     "homepage": "https://tablacus.github.io/explorer_en.html",
-    "hash": "acd0c093abf9b96c4d8220c0442b2d429deee74c6599337d20934b63fbe71ab8",
+    "hash": "8ac77b01f526de59953096f0adc2a000f6a2d7fcf0ef1db0bbfbb24550e25cb6",
     "shortcuts": [
         [
             "TE64.exe",
