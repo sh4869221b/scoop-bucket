@@ -8,7 +8,7 @@
     "architecture": {
         "64bit": {
             "url": "https://buildbot.orphis.net/ppsspp/index.php?m=dl&rev=v1.11.2-368-g233b0a87c&platform=windows-amd64#/dl.7z",
-            "hash": "7d5b0d39bfbf029c61a7b92b86f64cc1f7579376c0c41be050653629fc1e7644",
+            "hash": "5e9a2d9410a93856533bae205ec9d4534257c56f772e7079d0d7a212eb9f7b64",
             "bin": [
                 [
                     "PPSSPPWindows64.exe",
