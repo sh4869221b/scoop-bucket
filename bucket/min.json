@@ -1,11 +1,11 @@
 {
-    "version": "1.19.0",
+    "version": "1.19.1",
     "license": "Apache-2.0",
-    "extract_dir": "Min-v1.19.0",
-    "url": "https://github.com/minbrowser/min/releases/download/v1.19.0/Min-v1.19.0-win32-x64.zip",
+    "extract_dir": "Min-v1.19.1",
+    "url": "https://github.com/minbrowser/min/releases/download/v1.19.1/Min-v1.19.1-win32-x64.zip",
     "depends": "",
     "homepage": "https://minbrowser.github.io/min",
-    "hash": "caa8b373170fed71c4b7707b1224e4fa6c353502c17fa7f900862bc61098b488",
+    "hash": "3e729135090584565442fe14bd2a6b6203e569d4fbb3909cda1552849e0d179a",
     "bin": "",
     "shortcuts": [
         [
