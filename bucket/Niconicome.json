@@ -5,7 +5,7 @@
     "version": "0.7.0",
     "url": "https://github.com/Hayao-H/Niconicome/releases/download/v0.7.0/niconicome-win-x64-v0.7.0.zip",
     "extract_dir": "win-x64",
-    "pre_install": "if (-not(Test-Path $persist_dir/niconicome.db)) {Start-Process $dir\\Niconicome.exe -WorkingDirectory $dir;Start-Sleep 10; ps Niconicome | Stop-Process}",
+    "pre_install": "if (-not(Test-Path $persist_dir/niconicome.db)) {Start-Process $dir\\Niconicome.exe -WorkingDirectory $dir;Start-Sleep 10; ps Niconicome | Stop-Process};if (-not(Test-Path $dir/chrome)) {New-Item $dir/chrome -ItemType Directory}",
     "depends": "",
     "persist": "niconicome.db",
     "bin": "",
