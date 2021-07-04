@@ -1,9 +1,9 @@
 {
     "depends": "",
-    "url": "https://github.com/rustwasm/wasm-pack/releases/download/v0.9.1/wasm-pack-init.exe",
-    "hash": "30180d7185d611ee4b403cef447a636f0e3fde2833fa3c9511c2da1d4f87193e",
+    "url": "https://github.com/rustwasm/wasm-pack/releases/download/v0.10.0/wasm-pack-init.exe",
+    "hash": "5fec42f623bf0dc53b751cfbb3ca8a41e7ab274c3191e3852200284ebbbece4e",
     "homepage": "https://rustwasm.github.io/wasm-pack/",
-    "version": "0.9.1",
+    "version": "0.10.0",
     "bin": "wasm-pack-init.exe",
     "extract_dir": "",
     "license": "Apache-2.0",
