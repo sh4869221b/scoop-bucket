@@ -1,9 +1,9 @@
 {
     "homepage": "https://github.com/Hayao-H/Niconicome",
     "description": "",
-    "hash": "03c29ae487fac53b68e074c6880e44100b7f15947fee89dd1ab1d1d6801bebb9",
-    "version": "0.9.0",
-    "url": "https://github.com/Hayao-H/Niconicome/releases/download/v0.9.0/niconicome-win-x64-v0.9.0.zip",
+    "hash": "d2d8b71b1018363f895f6bf4646773e26b6858e3e1d24e55100db36334fef082",
+    "version": "0.10.0",
+    "url": "https://github.com/Hayao-H/Niconicome/releases/download/v0.10.0/niconicome-win-x64-v0.10.0.zip",
     "extract_dir": "win-x64",
     "pre_install": "if (-not(Test-Path $persist_dir/niconicome.db)) {Start-Process $dir\\Niconicome.exe -WorkingDirectory $dir;Start-Sleep 10; ps Niconicome | Stop-Process};if (-not(Test-Path $persist_dir/addons)) {New-Item $dir/addons -ItemType Directory}",
     "depends": "",
