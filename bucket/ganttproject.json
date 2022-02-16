@@ -1,15 +1,15 @@
 {
-    "version": "2.8.11",
+    "version": "2.8.9",
     "license": "GPL-3.0",
-    "extract_dir": "ganttproject-2.8.11-r2393",
+    "extract_dir": "ganttproject-2.8.9-r2335",
     "url": [
-        "https://github.com/bardsoftware/ganttproject/releases/download/ganttproject-2.8.11/ganttproject-2.8.11-r2393.zip",
+        "https://github.com/bardsoftware/ganttproject/releases/download/ganttproject-2.8.9/ganttproject-2.8.9-r2335.zip",
         "https://gist.githubusercontent.com/sh4869221b/03f8e7b6573bb805003789f84b1d5e4e/raw/b3dd7f95f03c451b8e97b9a6fa8db36b993a490d/ganttproject.bat"
     ],
     "depends": "",
     "homepage": "https://www.ganttproject.biz/",
     "hash": [
-        "253db21e403987db0963046015b5bf0e2194f85bef0feebf666534088a216828",
+        "11f5b350b17cf40f2f6dc2d64cf08e89cb19829477fd4a1aa8e92011451af117",
         "76240353647eec1b122f61df467b509fc5cf5255e7efc564365773025564c67d"
     ],
     "bin": "",
