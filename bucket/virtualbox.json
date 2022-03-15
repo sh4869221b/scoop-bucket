@@ -1,8 +1,8 @@
 {
-    "homepage": "https://www.virtualbox.org/",
-    "description": "Powerful x86 and AMD64/Intel64 virtualization product for enterprise as well as home use.",
-    "license": "GPL-2.0-only",
     "version": "6.1.32",
+    "description": "Powerful x86 and AMD64/Intel64 virtualization product for enterprise as well as home use.",
+    "homepage": "https://www.virtualbox.org/",
+    "license": "GPL-2.0-only",
     "url": "http://download.virtualbox.org/virtualbox/6.1.32/VirtualBox-6.1.32-149290-Win.exe#/VBoxSetup.exe",
     "hash": "f5f695da9e34f77b55b61f0eabb3644d5daad99117d896c837ef996a41e57c33",
     "installer": {
@@ -21,7 +21,7 @@
     ],
     "checkver": {
         "url": "https://update.virtualbox.org/query.php?platform=WINDOWS_64BITS_GENERIC&version=0.0.0",
-        "re": "VirtualBox-(?<version>[\\d.]+)-(?<revision>[\\d]+)-Win.exe"
+        "regex": "VirtualBox-(?<version>[\\d.]+)-(?<revision>[\\d]+)-Win.exe"
     },
     "autoupdate": {
         "url": "http://download.virtualbox.org/virtualbox/$version/VirtualBox-$version-$matchRevision-Win.exe#/VBoxSetup.exe",

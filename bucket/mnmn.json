@@ -1,10 +1,10 @@
 {
     "version": "0.84.7",
+    "homepage": "http://content-type-text.net/",
     "license": "",
     "extract_dir": "",
     "url": "https://bitbucket.org/sk_0520/mnmn/downloads/MnMn_0-84-7_x86.zip",
     "depends": "",
-    "homepage": "http://content-type-text.net/",
     "hash": "b0e1da4c304b868d694834f6aed605c472acf6a878bcbdcea31867c80a587e1b",
     "bin": "MnMn.exe",
     "shortcuts": [
@@ -15,7 +15,7 @@
     ],
     "checkver": {
         "url": "https://bitbucket.org/sk_0520/mnmn/downloads/",
-        "re": "MnMn_(?<major>[\\d]+)-(?<miner>[\\d]+)-(?<patch>[\\d]+)_x86.zip",
+        "regex": "MnMn_(?<major>[\\d]+)-(?<miner>[\\d]+)-(?<patch>[\\d]+)_x86.zip",
         "replace": "${major}.${miner}.${patch}"
     },
     "autoupdate": {

@@ -1,5 +1,6 @@
 {
     "version": "22.3.7",
+    "homepage": "https://tablacus.github.io/explorer_en.html",
     "license": "MIT",
     "persist": [
         "addons",
@@ -8,7 +9,6 @@
         "layout"
     ],
     "url": "https://github.com/tablacus/TablacusExplorer/releases/download/22.3.7/te220307.zip",
-    "homepage": "https://tablacus.github.io/explorer_en.html",
     "hash": "747bcfd4784c44edad44a01b5c9079961fae96bc28229d0c5cf74e6f38ce7017",
     "shortcuts": [
         [
@@ -18,7 +18,7 @@
     ],
     "checkver": {
         "url": "https://github.com/tablacus/TablacusExplorer/releases",
-        "re": "/(?<version>[\\d.]+)/te(?<file>[\\d]+).zip"
+        "regex": "/(?<version>[\\d.]+)/te(?<file>[\\d]+).zip"
     },
     "autoupdate": {
         "url": "https://github.com/tablacus/TablacusExplorer/releases/download/$version/te$matchFile.zip"
