@@ -1,5 +1,5 @@
 {
-    "version": "1.12.3-1215",
+    "version": "1.12.3-1219",
     "homepage": "https://www.ppsspp.org",
     "license": "GPL-2.0-only",
     "extract_dir": "ppsspp",
@@ -7,8 +7,8 @@
     "persist": "memstick",
     "architecture": {
         "64bit": {
-            "url": "https://buildbot.orphis.net/ppsspp/index.php?m=dl&rev=v1.12.3-1215-g3bf0c0088&platform=windows-amd64#/dl.7z",
-            "hash": "88324663036212f1f96bac1b6a7b3cd3a88c3d8bec4629c15297918568f2f113",
+            "url": "https://buildbot.orphis.net/ppsspp/index.php?m=dl&rev=v1.12.3-1219-g31a1cfd40&platform=windows-amd64#/dl.7z",
+            "hash": "1ecc308674c6856acf30961fae8a5b8b8474b3117ab313423e2b648b309906d2",
             "bin": [
                 [
                     "PPSSPPWindows64.exe",
@@ -23,8 +23,8 @@
             ]
         },
         "32bit": {
-            "url": "https://buildbot.orphis.net/ppsspp/index.php?m=dl&rev=v1.12.3-1215-g3bf0c0088&platform=windows-x86#/dl.7z",
-            "hash": "147bfbb8ed605b504f6770e4e7a8bebe6d0ec8c2e9032e09a6efd8cbedb23b9a",
+            "url": "https://buildbot.orphis.net/ppsspp/index.php?m=dl&rev=v1.12.3-1219-g31a1cfd40&platform=windows-x86#/dl.7z",
+            "hash": "6404de2c9024c5ad1687c386198810bf682ddb3e952214c32546ac86e8b2aebc",
             "bin": [
                 [
                     "PPSSPPWindows.exe",
