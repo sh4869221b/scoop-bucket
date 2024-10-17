@@ -1,10 +1,10 @@
 {
-    "version": "7.0.20",
+    "version": "7.0.22",
     "description": "Powerful x86 and AMD64/Intel64 virtualization product for enterprise as well as home use.",
     "homepage": "https://www.virtualbox.org/",
     "license": "GPL-2.0-only",
-    "url": "http://download.virtualbox.org/virtualbox/7.0.20/VirtualBox-7.0.20-163906-Win.exe#/VBoxSetup.exe",
-    "hash": "fa3544162eee87b660999bd913f76ccb2e5a706928ef2c2e29811e4ac76fb166",
+    "url": "http://download.virtualbox.org/virtualbox/7.0.22/VirtualBox-7.0.22-165102-Win.exe#/VBoxSetup.exe",
+    "hash": "18f54b80a8ce0d2aa63ac986e97ead294b013dfec102646f89d23ba19a89c4b8",
     "installer": {
         "script": "Start-Process cmd -Verb Runas \"/c $dir\\VBoxSetup.exe --msiparams INSTALLDIR=$dir VBOX_START=0 REBOOT=ReallySuppress --silent\" -Wait -WindowStyle hidden"
     },
