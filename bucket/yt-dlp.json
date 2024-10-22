@@ -1,13 +1,13 @@
 {
-    "version": "2024.10.07",
+    "version": "2024.10.22",
     "description": "This is a youtube-dl fork based on the now inactive youtube-dlc.",
     "homepage": "https://github.com/yt-dlp/yt-dlp",
     "license": "Unlicense",
-    "hash": "fdf3856b6392e9b96637229294993dae2331f2565fcdfc8cccada74927dc31bb",
+    "hash": "427f257578b99227e5364a0712bee649cab849be43e4916fe23a136305fd0151",
     "bin": "yt-dlp.exe",
     "depends": "",
     "extract_dir": "",
-    "url": "https://github.com/yt-dlp/yt-dlp/releases/download/2024.10.07/yt-dlp.exe",
+    "url": "https://github.com/yt-dlp/yt-dlp/releases/download/2024.10.22/yt-dlp.exe",
     "checkver": "github",
     "autoupdate": {
         "url": "https://github.com/yt-dlp/yt-dlp/releases/download/$version/yt-dlp.exe"
