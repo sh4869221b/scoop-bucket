@@ -15,12 +15,14 @@ provided by `windows-latest`, with Pester **6.2.0**. It checks the official Scoo
 schema, required metadata, URL/hash pairs, executable paths, architecture and
 update definitions, the Nico CLI contracts, PowerShell syntax, and argument
 forwarding. Empty discovery, failed discovery, failed tests, and all-skipped
-suites fail the job. NUnit XML reports are uploaded for 14 days.
+suites fail the job. NUnit XML reports are uploaded for 14 days. Dependency setup verifies the official
+PowerShell Gallery, installs the exact Pester version and retries transient
+download failures.
 
 Run the same tests locally from either supported PowerShell edition:
 
 ```powershell
-Install-Module Pester -RequiredVersion 6.2.0 -Scope CurrentUser -Repository PSGallery -Force -SkipPublisherCheck
+./bin/install-test-dependencies.ps1
 git clone https://github.com/ScoopInstaller/Scoop.git ../scoop-core
 git -C ../scoop-core checkout e6aa3b366bdee8ed138c1e0f7b85192ebdd35d0f
 $env:SCOOP_HOME = (Resolve-Path ../scoop-core).Path

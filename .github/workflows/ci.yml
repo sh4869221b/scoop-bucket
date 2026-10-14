@@ -39,7 +39,7 @@ jobs:
           persist-credentials: false
       - name: Install pinned Pester
         run: |
-          Install-Module Pester -RequiredVersion 6.2.0 -Repository PSGallery -Scope CurrentUser -Force -SkipPublisherCheck -ErrorAction Stop
+          ./my_bucket/bin/install-test-dependencies.ps1
       - name: Test every manifest and script
         run: |
           $env:SCOOP_HOME = Convert-Path ./scoop_core
@@ -80,7 +80,7 @@ jobs:
           persist-credentials: false
       - name: Install pinned Pester
         run: |
-          Install-Module Pester -RequiredVersion 6.2.0 -Repository PSGallery -Scope CurrentUser -Force -SkipPublisherCheck -ErrorAction Stop
+          ./my_bucket/bin/install-test-dependencies.ps1
       - name: Test only the Nico CLI releases
         run: |
           $env:SCOOP_HOME = Convert-Path ./scoop_core
