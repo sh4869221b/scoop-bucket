@@ -6,4 +6,6 @@
 !.vscode/launch.json
 !.vscode/extensions.json
 
-
+# Local and CI Pester reports
+TestResults.xml
+SmokeResults.xml

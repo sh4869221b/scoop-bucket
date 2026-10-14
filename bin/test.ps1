@@ -1,15 +1,23 @@
 #Requires -Version 5.1
-#Requires -Modules @{ ModuleName = 'BuildHelpers'; ModuleVersion = '2.0.1' }
-#Requires -Modules @{ ModuleName = 'Pester'; ModuleVersion = '5.2.0' }
+[CmdletBinding()]
+param(
+    [string]$TestPath = (Join-Path $PSScriptRoot '../tests/unit'),
+    [string]$ResultPath = (Join-Path $PSScriptRoot '../TestResults.xml')
+)
 
-$pesterConfig = New-PesterConfiguration -Hashtable @{
-    Run    = @{
-        Path     = "$PSScriptRoot/.."
-        PassThru = $true
-    }
-    Output = @{
-        Verbosity = 'Detailed'
-    }
+$ErrorActionPreference = 'Stop'
+Import-Module Pester -RequiredVersion 6.2.0 -ErrorAction Stop
+$testFiles = @(Get-ChildItem -LiteralPath $TestPath -Filter '*.Tests.ps1' -File -Recurse -ErrorAction Stop)
+if ($testFiles.Count -eq 0) {
+    throw "No test files were found in $TestPath. Refusing an empty successful run."
 }
-$result = Invoke-Pester -Configuration $pesterConfig
-exit $result.FailedCount
+$config = New-PesterConfiguration -Hashtable @{
+    Run = @{ Path = $testFiles.FullName; PassThru = $true; Exit = $false }
+    Output = @{ Verbosity = 'Detailed' }
+    TestResult = @{ Enabled = $true; OutputPath = $ResultPath; OutputFormat = 'NUnitXml' }
+}
+$result = Invoke-Pester -Configuration $config
+Write-Host "Test totals: $($result.TotalCount); passed: $($result.PassedCount); failed: $($result.FailedCount); skipped: $($result.SkippedCount); not run: $($result.NotRunCount)"
+if ($result.TotalCount -eq 0 -or $result.PassedCount -eq 0 -or $result.Result -ne 'Passed') {
+    throw 'Tests failed, discovery failed, or no tests passed. See the Pester results above.'
+}

@@ -1,4 +1,6 @@
-if(!$env:SCOOP_HOME) { $env:SCOOP_HOME = Resolve-Path (scoop prefix scoop) }
-$checkhashes = "$env:SCOOP_HOME/bin/checkhashes.ps1"
-$dir = "$PSScriptRoot/../bucket" # checks the parent dir
-Invoke-Expression -Command "& '$checkhashes' -Dir '$dir' $($args | ForEach-Object { "$_ " })"
+#Requires -Version 5.1
+$ErrorActionPreference = 'Stop'
+if (!$env:SCOOP_HOME) { $env:SCOOP_HOME = Convert-Path (scoop prefix scoop) }
+$script = Join-Path $env:SCOOP_HOME 'bin/checkhashes.ps1'
+$dir = Join-Path $PSScriptRoot '../bucket'
+& $script -Dir $dir @Args
