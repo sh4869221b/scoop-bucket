@@ -14,6 +14,7 @@ BeforeAll {
     $env:SCOOP_CACHE = Join-Path $TestDrive 'cache'
     $env:SCOOP_GLOBAL = Join-Path $TestDrive 'global'
     $null = New-Item (Join-Path $env:SCOOP 'shims') -ItemType Directory -Force
+    $null = New-Item (Join-Path $env:SCOOP 'buckets') -ItemType Directory -Force
     # Scoop resolves its bundled shim.exe from apps/scoop/current.
     $core = New-Item (Join-Path $env:SCOOP 'apps/scoop/current') -ItemType Directory -Force
     Copy-Item (Join-Path $env:SCOOP_HOME '*') -Destination $core.FullName -Recurse
@@ -55,9 +56,9 @@ Describe 'Windows install: <Name> (<Arch>)' -ForEach @(
             $peOffset = [BitConverter]::ToInt32($bytes, 0x3c)
             $expectedMachine = if ($Arch -eq '32bit') { 0x014c } else { 0x8664 }
             [BitConverter]::ToUInt16($bytes, $peOffset + 4) | Should -Be $expectedMachine
-            $record = Get-Content (Join-Path $installed 'install.json') -Raw | ConvertFrom-Json
+            $record = Get-Content (Join-Path $installed 'scoop-install.json') -Raw | ConvertFrom-Json
             $record.architecture | Should -Be $Arch
-            $installedManifest = Get-Content (Join-Path $installed 'manifest.json') -Raw | ConvertFrom-Json
+            $installedManifest = Get-Content (Join-Path $installed 'scoop-manifest.json') -Raw | ConvertFrom-Json
             $installedManifest.version | Should -Be $manifest.version
             $shim = Join-Path $env:SCOOP "shims/$Name.exe"
             Test-Path $shim | Should -BeTrue
