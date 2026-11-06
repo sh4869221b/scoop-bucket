@@ -28,6 +28,9 @@ jobs:
           import urllib.parse
           import urllib.request
           
+          def reject_non_json_constant(value):
+              raise ValueError(f"Invalid JSON numeric constant: {value}")
+          
           def get(path):
               request = urllib.request.Request(
                   "https://api.github.com/" + path,
@@ -66,7 +69,9 @@ jobs:
               content = get(f"repos/{head_repo}/contents/{quoted}?ref={sha}")
               if content.get("type") != "file" or content.get("encoding") != "base64":
                   raise ValueError("Manifest is not a supported regular text file")
-              manifest = json.loads(base64.b64decode(content["content"], validate=False).decode("utf-8-sig"))
+              manifest = json.loads(
+                  base64.b64decode(content["content"], validate=False).decode("utf-8-sig"),
+                  parse_constant=reject_non_json_constant)
               if not isinstance(manifest, dict):
                   raise ValueError("Manifest must be a JSON object")
               checked += 1
