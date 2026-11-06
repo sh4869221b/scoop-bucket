@@ -61,8 +61,18 @@ Scoop root, config, cache and global paths are all isolated in the test director
 `bin/checkver.ps1`, `checkurls.ps1`, `checkhashes.ps1`, `formatjson.ps1`,
 `missing-checkver.ps1` and `auto-pr.ps1` delegate to the installed Scoop (or
 `SCOOP_HOME`) with argument splatting, without evaluating argument strings.
-The existing Excavator schedule and issue/PR handlers are preserved. Tests never
+The existing Excavator schedule and opened-PR handler are preserved. Tests never
 run `checkver -Update` or rewrite manifests.
+
+### Comment verification security
+
+`/verify` on a pull request checks JSON syntax for changed manifests at the
+reported head commit. Results appear in the **Commented Pull Request** Actions
+run, not as comments or labels. This read-only workflow fetches manifests as data;
+it never checks out PR code or runs manifest `checkver`/installation scripts.
+Use the **Tests** workflow for full schema and unit validation. Authorized
+maintainers can rerun those checks through GitHub's Actions UI. A push during
+comment verification fails the check and requires a new `/verify` comment.
 
 Some older GUI manifests have empty optional `bin` values, and two legacy
 manifests have empty license strings accepted by Scoop's current schema. The
