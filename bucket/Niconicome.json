@@ -17,7 +17,9 @@
         "niconicome.db",
         "addons",
         "log",
-        "cache"
+        "cache",
+        "downloaded",
+        "backups"
     ],
     "shortcuts": [
         [
@@ -37,7 +39,11 @@
         "    }",
         "}"
     ],
-    "notes": "Version 0.11.0 is pinned pending verification of prerelease database and addon migration. Close Niconicome and back up the active database and Scoop persist before upgrading or reinstalling.",
+    "notes": [
+        "Before updating, reinstalling or uninstalling an older Scoop install, close Niconicome and copy its downloads, backups, database and its journal (if present) to a separate location outside Scoop.",
+        "Scoop uses the existing installed manifest for cleanup. Follow the Niconicome migration steps in the bucket README before running Scoop commands.",
+        "Version 0.11.0 is pinned pending verification of prerelease database and addon migration."
+    ],
     "architecture": {
         "64bit": {
             "url": "https://github.com/Hayao-H/Niconicome/releases/download/v0.11.0/niconicome-win-x64-v0.11.0.zip",

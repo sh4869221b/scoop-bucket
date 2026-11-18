@@ -1,3 +1,5 @@
+BeforeDiscovery { $skipWindowsHooks = $env:OS -ne 'Windows_NT' }
+
 BeforeAll {
     function Read-BucketManifest([string]$Name) {
         Get-Content -LiteralPath (Join-Path $PSScriptRoot "../../bucket/$Name.json") -Raw | ConvertFrom-Json
@@ -17,7 +19,7 @@ Describe 'commeon transport' {
 Describe 'Architecture selection for <Name>' -ForEach @(
     @{ Name = 'Niconicome'; Expected = '64bit' }
     @{ Name = 'compactgui'; Expected = '64bit' }
-    @{ Name = 'virtualbox'; Expected = '64bit' }
+    @{ Name = 'virtualbox'; Expected = '64bit,arm64' }
     @{ Name = 'psc-package'; Expected = '64bit' }
     @{ Name = 'min'; Expected = '64bit,arm64' }
     @{ Name = 'wasm-pack'; Expected = '64bit,arm64' }
@@ -92,11 +94,19 @@ Describe 'Verified release assets' {
         $manifest.shortcuts[0][0] | Should -Be 'ganttproject.bat'
     }
 
-    It 'finds a PPSSPP build with a Windows ZIP and reconstructs its matching downloads' {
+    It 'requires both PPSSPP ZIPs for the same build and reconstructs its matching downloads' {
         $manifest = Read-BucketManifest 'ppsspp-dev'
         $manifest.checkver.url | Should -Be 'https://builds.ppsspp.org/meta/history-20.json'
-        $builds = '[{"description":"v1.20.4-4975-g9abcde1234ff","builds":{"Windows":[]}},{"description":"v1.20.4-4974-g154d52379a3f","builds":{"Windows":["ppsspp_win_v1.20.4-4974-g154d52379a3f.zip"]}}]'
-        $match = [regex]::Match($builds, $manifest.checkver.regex)
+        $selector = [scriptblock]::Create($manifest.checkver.script -join "`n")
+        $page = @'
+[
+  {"description":"v1.20.4-4977-gabcd","builds":{"Windows":["ppsspp_win_v1.20.4-4977-gabcd.zip"]}},
+  {"description":"v1.20.4-4976-gabcd","builds":{"WindowsARM64":["PPSSPPWindowsARM64_v1.20.4-4976-gabcd.zip"]}},
+  {"description":"v1.20.4-4975-gabcd","builds":{"Windows":["ppsspp_win_v1.20.4-4975-gabcd.zip"],"WindowsARM64":["PPSSPPWindowsARM64_v1.20.4-4976-gabcd.zip"]}},
+  {"description":"v1.20.4-4974-g154d52379a3f","builds":{"Windows":["ppsspp_win_v1.20.4-4974-g154d52379a3f.zip"],"WindowsARM64":["PPSSPPWindowsARM64_v1.20.4-4974-g154d52379a3f.zip"]}}
+]
+'@
+        $match = [regex]::Match((& $selector), $manifest.checkver.regex)
         $match.Groups['version'].Value | Should -Be '1.20.4-4974'
         $match.Groups['build'].Value | Should -Be 'g154d52379a3f'
         $expected = @{
@@ -113,6 +123,15 @@ Describe 'Verified release assets' {
         $manifest.architecture.arm64.bin[0][0] | Should -Be 'PPSSPPWindowsARM64.exe'
         $manifest.extract_dir | Should -BeNullOrEmpty
         $manifest.persist | Should -Be 'memstick'
+        $page = (ConvertFrom-Json $page | Select-Object -First 3) | ConvertTo-Json -Depth 6
+        (& $selector) | Should -BeNullOrEmpty
+    }
+
+    It 'uses Scoop SHA-256 discovery and downloads for psc-package' {
+        $manifest = Read-BucketManifest 'psc-package'
+        $manifest.architecture.'64bit'.hash | Should -Match '^[0-9a-f]{64}$'
+        $manifest.autoupdate.hash | Should -BeNullOrEmpty
+        $manifest.autoupdate.architecture.'64bit'.url.Replace('$version', $manifest.version) | Should -Be $manifest.architecture.'64bit'.url
     }
 
     It 'installs the wasm-pack CLI from the matching archives' {
@@ -196,47 +215,127 @@ Describe 'Niconicome persistence' {
         $manifest.checkver | Should -BeNullOrEmpty
         $manifest.autoupdate | Should -BeNullOrEmpty
     }
+
+    It 'persists downloads and backups and documents migration from the saved manifest' {
+        $manifest.persist | Should -Contain 'downloaded'
+        $manifest.persist | Should -Contain 'backups'
+        $manifest.notes -join ' ' | Should -Match 'outside Scoop'
+        $manifest.notes -join ' ' | Should -Match 'existing installed manifest'
+    }
+
+    It 'keeps downloads and backups after Scoop unlinks and removes the app directory' -Skip:$skipWindowsHooks {
+        . (Join-Path $env:SCOOP_HOME 'lib/core.ps1')
+        . (Join-Path $env:SCOOP_HOME 'lib/install.ps1')
+        $dir = Join-Path $root 'app'
+        $persist_dir = Join-Path $root 'persist'
+        $null = [IO.Directory]::CreateDirectory($dir)
+        & $preInstall
+
+        $folders = 'downloaded', 'backups'
+        foreach ($name in $folders) {
+            $source = Join-Path $dir $name
+            $null = [IO.Directory]::CreateDirectory($source)
+            [IO.File]::WriteAllText((Join-Path $source 'fixture.txt'), $name)
+        }
+        persist_data $manifest $dir $persist_dir
+        foreach ($name in $folders) {
+            (Get-Item -LiteralPath (Join-Path $dir $name)).LinkType | Should -Be 'Junction'
+        }
+
+        unlink_persist_data $manifest $dir
+        foreach ($name in $folders) {
+            Test-Path -LiteralPath (Join-Path $dir $name) | Should -BeFalse
+        }
+        Remove-Item -LiteralPath $dir -Recurse
+        foreach ($name in $folders) {
+            Get-Content -LiteralPath (Join-Path $persist_dir "$name/fixture.txt") | Should -Be $name
+        }
+    }
 }
 
-Describe 'VirtualBox installer and removal' {
+Describe 'Windows Installer inventory API' -Skip:$skipWindowsHooks {
+    It 'returns a readable empty related-product list for an unused upgrade code' {
+        $installer = New-Object -ComObject WindowsInstaller.Installer -ErrorAction Stop
+        $upgradeCode = [guid]::NewGuid().ToString('B')
+        $products = $installer.RelatedProducts($upgradeCode)
+        $products.Count | Should -Be 0
+    }
+}
+
+Describe 'VirtualBox installer and removal' -Skip:$skipWindowsHooks {
     BeforeAll {
         $manifest = Read-BucketManifest 'virtualbox'
+        $version = $manifest.version
         $install = [scriptblock]::Create($manifest.installer.script -join "`n")
         $uninstall = [scriptblock]::Create($manifest.uninstaller.script -join "`n")
         function abort($message) { throw $message }
+
+        function New-MsiInventory([int]$Before, [int]$After, [string]$RegisteredVersion) {
+            $probe = [pscustomobject]@{ Before = $Before; After = $After; RegisteredVersion = $RegisteredVersion; Calls = 0 }
+            $probe | Add-Member ScriptMethod RelatedProducts {
+                param($UpgradeCode)
+                if ($UpgradeCode -ne '{C4BAD770-BFE8-4D2C-A592-693028A7215B}') { throw 'Unexpected MSI family' }
+                $this.Calls++
+                $count = if ($this.Calls -eq 1) { $this.Before } else { $this.After }
+                $products = [pscustomobject]@{ Count = $count }
+                $products | Add-Member ScriptMethod Item { '{D726D65F-25B7-436D-85D5-41310BA0E8EA}' }
+                $products
+            }
+            $probe | Add-Member ScriptMethod ProductInfo { $this.RegisteredVersion }
+            $probe
+        }
     }
 
     BeforeEach {
         $root = Join-Path $TestDrive ([guid]::NewGuid().ToString())
         $dir = Join-Path $root 'folder [with spaces]; and ampersand &'
         $null = [IO.Directory]::CreateDirectory($dir)
-        $installedExe = Join-Path $dir 'VirtualBox.exe'
+        Mock New-Object { $msiInventory } -ParameterFilter { $ComObject -eq 'WindowsInstaller.Installer' }
+        Mock Start-Process { [pscustomobject]@{ ExitCode = 0 } }
     }
 
-    It 'passes the installer path directly and quotes the Oracle MSI argument' {
-        [IO.File]::WriteAllText($installedExe, 'test fixture')
-        Mock Start-Process { [pscustomobject]@{ ExitCode = 0 } }
+    It 'installs to the protected default path and creates a CLI shim in Scoop' {
+        $msiInventory = New-MsiInventory 0 1 $version
+        Mock Test-Path { $true } -ParameterFilter { $LiteralPath -like '*\Oracle\VirtualBox\VBoxManage.exe' }
         & $install
         $expectedSetup = Join-Path $dir 'VBoxSetup.exe'
-        $expectedArgs = '--msiparams "INSTALLDIR=""{0}"" VBOX_START=0 REBOOT=ReallySuppress" --silent' -f $dir
         Should -Invoke Start-Process -Times 1 -Exactly -ParameterFilter {
-            $FilePath -eq $expectedSetup -and ($ArgumentList -join ' ') -eq $expectedArgs -and $Verb -eq 'RunAs' -and $Wait
+            $FilePath -eq $expectedSetup -and $Verb -eq 'RunAs' -and $Wait -and
+            ($ArgumentList -join ' ') -eq '--msiparams "VBOX_START=0 VBOX_INSTALLSTARTMENUENTRIES=1 REBOOT=ReallySuppress" --silent'
         }
+        $manifest.bin | Should -Be 'VBoxManage.ps1'
+        Test-Path -LiteralPath (Join-Path $dir $manifest.bin) -PathType Leaf | Should -BeTrue
+        $target = Get-Content -LiteralPath (Join-Path $dir 'vbox-manage-path.txt')
+        $target | Should -Match '\\Oracle\\VirtualBox\\VBoxManage\.exe$'
+        $target.StartsWith($dir, [StringComparison]::OrdinalIgnoreCase) | Should -BeFalse
     }
 
-    It 'reports a failed installer or a missing installed application' {
+    It 'leaves pre-existing Oracle installs alone and checks failure and MSI registration' {
+        $msiInventory = New-MsiInventory 1 1 $version
+        { & $install } | Should -Throw '*existing Oracle VirtualBox installation*'
+        Should -Invoke Start-Process -Times 0 -Exactly
+
+        $msiInventory = New-MsiInventory 0 0 $version
+        { & $install } | Should -Throw '*Expected Oracle VirtualBox MSI registration*'
+
+        $msiInventory = New-MsiInventory 0 1 $version
         Mock Start-Process { [pscustomobject]@{ ExitCode = 1603 } }
         { & $install } | Should -Throw '*exit code 1603*'
-        Mock Start-Process { [pscustomobject]@{ ExitCode = 0 } }
-        { & $install } | Should -Throw '*was not installed into the Scoop directory*'
+        Test-Path -LiteralPath (Join-Path $dir $manifest.bin) | Should -BeFalse
     }
 
-    It 'blocks Scoop cleanup until the user removes the installed application' {
-        Mock Start-Process { throw 'Unexpected uninstall process' }
-        [IO.File]::WriteAllText($installedExe, 'test fixture')
+    It 'blocks Scoop removal based on registration even when the executable is missing' {
+        $msiInventory = New-MsiInventory 1 1 $version
         { & $uninstall } | Should -Throw '*Windows Installed apps*'
-        Remove-Item -LiteralPath $installedExe
+        $msiInventory = New-MsiInventory 0 0 $version
         { & $uninstall } | Should -Not -Throw
+        Should -Invoke Start-Process -Times 0 -Exactly
+    }
+
+    It 'propagates an MSI inventory error before changing Scoop state' {
+        Mock New-Object { throw 'MSI inventory unavailable' } -ParameterFilter { $ComObject -eq 'WindowsInstaller.Installer' }
+        { & $install } | Should -Throw '*inventory unavailable*'
+        { & $uninstall } | Should -Throw '*inventory unavailable*'
         Should -Invoke Start-Process -Times 0 -Exactly
     }
 }

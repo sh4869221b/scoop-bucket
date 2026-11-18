@@ -1,32 +1,56 @@
 {
     "version": "7.2.22",
-    "description": "Powerful x86 and AMD64/Intel64 virtualization product for enterprise as well as home use.",
+    "description": "Oracle VirtualBox for Windows on x64 or Windows 11 on ARM64 (experimental).",
     "homepage": "https://www.virtualbox.org/",
     "license": "GPL-2.0-only",
     "installer": {
         "script": [
+            "$msi = New-Object -ComObject WindowsInstaller.Installer -ErrorAction Stop",
+            "# Both native MSI payloads use the same Oracle VirtualBox UpgradeCode.",
+            "$upgradeCode = \"{C4BAD770-BFE8-4D2C-A592-693028A7215B}\"",
+            "$products = $msi.RelatedProducts($upgradeCode)",
+            "if ($null -eq $products -or $products.Count -ne 0) { throw \"Remove the existing Oracle VirtualBox installation through Windows Installed apps before installing through Scoop.\" }",
+            "$machine = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Registry64)",
+            "try {",
+            "    $windows = $machine.OpenSubKey(\"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\")",
+            "    if (-not $windows) { throw \"Cannot open the native Windows registry view.\" }",
+            "    try { $programFiles = $windows.GetValue(\"ProgramFilesDir\") } finally { $windows.Dispose() }",
+            "} finally { $machine.Dispose() }",
+            "if (-not $programFiles) { throw \"Cannot resolve the native Program Files directory.\" }",
+            "$oracleDir = Join-Path $programFiles \"Oracle\\VirtualBox\"",
+            "$cli = Join-Path $oracleDir \"VBoxManage.exe\"",
             "$setup = Join-Path $dir \"VBoxSetup.exe\"",
-            "$arguments = '--msiparams \"INSTALLDIR=\"\"{0}\"\" VBOX_START=0 REBOOT=ReallySuppress\" --silent' -f $dir",
+            "$arguments = '--msiparams \"VBOX_START=0 VBOX_INSTALLSTARTMENUENTRIES=1 REBOOT=ReallySuppress\" --silent'",
             "$process = Start-Process -FilePath $setup -ArgumentList $arguments -Verb RunAs -Wait -PassThru -ErrorAction Stop",
             "if ($process.ExitCode -notin 0, 3010) { throw \"VirtualBox installer failed with exit code $($process.ExitCode).\" }",
-            "if (-not (Test-Path -LiteralPath (Join-Path $dir \"VirtualBox.exe\") -PathType Leaf)) { throw \"VirtualBox was not installed into the Scoop directory.\" }"
+            "$products = $msi.RelatedProducts($upgradeCode)",
+            "if ($null -eq $products -or $products.Count -ne 1 -or",
+            "    $msi.ProductInfo($products.Item(0), \"VersionString\") -ne $version -or",
+            "    -not (Test-Path -LiteralPath $cli -PathType Leaf -ErrorAction Stop)) {",
+            "    throw \"Expected Oracle VirtualBox MSI registration and binaries in Program Files. Inspect Windows Installed apps before retrying.\"",
+            "}",
+            "Set-Content -LiteralPath (Join-Path $dir \"vbox-manage-path.txt\") -Value $cli -Encoding UTF8 -ErrorAction Stop",
+            "@(",
+            "    '$exe = Get-Content -LiteralPath (Join-Path $PSScriptRoot \"vbox-manage-path.txt\") -ErrorAction Stop'",
+            "    '& $exe @args'",
+            "    'exit $LASTEXITCODE'",
+            ") | Set-Content -LiteralPath (Join-Path $dir \"VBoxManage.ps1\") -Encoding UTF8 -ErrorAction Stop"
         ]
     },
     "post_install": "Remove-Item -LiteralPath (Join-Path $dir \"VBoxSetup.exe\")",
     "uninstaller": {
         "script": [
-            "if (Test-Path -LiteralPath (Join-Path $dir \"VirtualBox.exe\") -PathType Leaf -ErrorAction Stop) {",
+            "$msi = New-Object -ComObject WindowsInstaller.Installer -ErrorAction Stop",
+            "# Both native MSI payloads use the same Oracle VirtualBox UpgradeCode.",
+            "$upgradeCode = \"{C4BAD770-BFE8-4D2C-A592-693028A7215B}\"",
+            "$products = $msi.RelatedProducts($upgradeCode)",
+            "if ($null -eq $products) { throw \"Cannot determine whether Oracle VirtualBox is still registered.\" }",
+            "if ($products.Count -ne 0) {",
             "    abort \"Remove Oracle VirtualBox through Windows Installed apps, then rerun the Scoop command.\"",
             "}"
         ]
     },
-    "bin": "VBoxManage.exe",
-    "shortcuts": [
-        [
-            "VirtualBox.exe",
-            "Oracle VM VirtualBox"
-        ]
-    ],
+    "bin": "VBoxManage.ps1",
     "checkver": {
         "url": "https://update.virtualbox.org/query.php?platform=WINDOWS_64BITS_GENERIC&version=0.0.0",
         "regex": "VirtualBox-(?<version>[\\d.]+)-(?<revision>[\\d]+)-Win.exe"
@@ -38,15 +62,23 @@
         "architecture": {
             "64bit": {
                 "url": "https://download.virtualbox.org/virtualbox/$version/VirtualBox-$version-$matchRevision-Win.exe#/VBoxSetup.exe"
+            },
+            "arm64": {
+                "url": "https://download.virtualbox.org/virtualbox/$version/VirtualBox-$version-$matchRevision-Win.exe#/VBoxSetup.exe"
             }
         }
     },
     "notes": [
-        "The Oracle installer requires a custom location with restricted parent directory permissions.",
-        "Before updating or uninstalling in Scoop, remove Oracle VirtualBox through Windows Installed apps."
+        "Oracle installs the application and its Start menu entry in the system locations. Scoop provides the VBoxManage shim.",
+        "Remove Oracle VirtualBox through Windows Installed apps before updating or uninstalling in Scoop.",
+        "Oracle describes support for Windows 11 ARM64 hosts as experimental."
     ],
     "architecture": {
         "64bit": {
+            "url": "https://download.virtualbox.org/virtualbox/7.2.22/VirtualBox-7.2.22-175245-Win.exe#/VBoxSetup.exe",
+            "hash": "afd0ff1656cbe04ed88ce619594ae021419d97cce89fa9bdc443e9a963f1713f"
+        },
+        "arm64": {
             "url": "https://download.virtualbox.org/virtualbox/7.2.22/VirtualBox-7.2.22-175245-Win.exe#/VBoxSetup.exe",
             "hash": "afd0ff1656cbe04ed88ce619594ae021419d97cce89fa9bdc443e9a963f1713f"
         }

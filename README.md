@@ -61,20 +61,46 @@ Scoop root, config, cache and global paths are all isolated in the test director
 `bin/checkver.ps1`, `checkurls.ps1`, `checkhashes.ps1`, `formatjson.ps1`,
 `missing-checkver.ps1` and `auto-pr.ps1` delegate to the installed Scoop (or
 `SCOOP_HOME`) with argument splatting, without evaluating argument strings.
-Excavator and the issue handler call Tests when the working branch head advances.
-Pushes made with the Actions `GITHUB_TOKEN` do not trigger the usual push workflow.
-The maintenance run records the resulting branch head SHA and the test jobs check out
-that exact revision. Tests never run `checkver -Update` or rewrite manifests.
+Pushes made with the Actions `GITHUB_TOKEN` skip the usual push workflow.
+Excavator and the issue handler take the submitted SHA from Git's local
+`update by push` record, including a successfully published hash-fix PR branch.
+Tests check out that SHA with read-only access. A separate job sets the
+`Tests / maintenance` commit status on the submitted SHA and links the run.
+Maintenance and ordinary push runs use independent concurrency groups.
+Tests never run `checkver -Update` or rewrite manifests.
 
 ### Package maintenance
 
-- Before updating or uninstalling VirtualBox through Scoop, remove Oracle VirtualBox
-  through Windows Installed apps. Oracle's Windows installer requires a custom
-  installation directory with restricted parent-directory permissions.
-- Before reinstalling or migrating Niconicome, close it normally and back up
-  `niconicome.db` in both the active app directory and Scoop's persist directory.
-  If either location contains a `niconicome-log.db` journal, include it in the
-  backup. Niconicome is pinned to 0.11.0 while prerelease migration is unverified.
+- VirtualBox installs to Oracle's protected Program Files location. Oracle provides
+  the Start menu entry and Scoop provides the `VBoxManage` shim. Before a Scoop
+  update or uninstall, close VirtualBox, back up or shut down your VMs as
+  appropriate, and remove the registered Oracle VirtualBox product through
+  Windows Installed apps. Do this first for older bucket installs too.
+  Oracle classifies Windows 11 ARM64 host support as experimental.
+
+#### Moving data from an older Niconicome install
+
+Scoop runs the previously saved manifest's cleanup hooks on update and uninstall.
+Prepare a separate backup before running either command, even if the bucket
+already lists `downloaded` and `backups` as persisted.
+
+1. Close Niconicome normally. Find the active app folder with
+   `scoop prefix Niconicome` and locate `persist/Niconicome` in the same Scoop
+   root. For a global install, use that installation's global Scoop root.
+2. Copy the contents of the active app's `downloaded` and `backups` folders,
+   the persisted folder, and any custom download location to a backup location
+   outside Scoop. Keep separate copies of `niconicome.db` from the active and
+   persisted folders, each with its own `niconicome-log.db` if present. Check that
+   the copies are readable and include the expected files.
+3. Install or reinstall with the updated manifest. Before opening Niconicome,
+   restore missing downloads and backups into the new persisted `downloaded`
+   and `backups` folders. Review conflicting files and keep both copies until
+   resolved. If the databases differ or a journal is present, retain the
+   database and journal together and resolve which copy to restore before
+   starting the new install. Keep the independent backup until you've checked
+   the library, downloads and backup list in Niconicome.
+
+Niconicome remains at 0.11.0 while prerelease migration is unverified.
 
 ### Comment verification security
 
