@@ -88,7 +88,7 @@ your data. Complete this backup before updating, uninstalling, or running
 1. Close Niconicome normally. Use `scoop prefix Niconicome` to locate your Scoop
    root and inspect **every** directory under `apps/Niconicome`, including
    older versions and renamed directories such as `_0.11.0.old` and
-   `_0.11.0.old.1`. To include hidden directories, run
+   `_0.11.0.old(1)`. To include hidden directories, run
    `Get-ChildItem -LiteralPath '<Scoop root>\apps\Niconicome' -Directory -Force`.
    If `current` is a junction, check its target and include that target if it
    isn't already in the list. Check both Scoop roots if you have local and global
