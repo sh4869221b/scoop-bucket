@@ -2,31 +2,39 @@ on:
   issues:
     types: [ opened, labeled ]
 name: Issues
+permissions: {}
 jobs:
   issueHandler:
     name: IssueHandler
     runs-on: windows-latest
     if: github.event.action == 'opened' || (github.event.action == 'labeled' && contains(github.event.issue.labels.*.name, 'verify'))
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
     outputs:
       revision: ${{ steps.published.outputs.revision }}
+      published_ref: ${{ steps.published.outputs.published_ref }}
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+    - name: Record local push transactions
+      run: git config --local core.logAllRefUpdates true
     - name: IssueHandler
       uses: ScoopInstaller/GithubActions@5bceeda181721d9d10a18fdcc3ddca6f33467ae6 # v3.0.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - name: Find the published branch head
+    - name: Find the revision published by this checkout
       id: published
       if: ${{ !cancelled() }}
       shell: pwsh
-      env:
-        GH_TOKEN: ${{ github.token }}
       run: ./bin/published-revision.ps1
   test-updates:
     needs: issueHandler
     if: ${{ !cancelled() && needs.issueHandler.outputs.revision != '' }}
-    uses: ./.github/workflows/ci.yml
+    uses: ./.github/workflows/test-maintenance.yml
     permissions:
       contents: read
+      statuses: write
     with:
       revision: ${{ needs.issueHandler.outputs.revision }}
+      published_ref: ${{ needs.issueHandler.outputs.published_ref }}

@@ -66,45 +66,98 @@ Describe 'Test runner failure guards' {
 Describe 'Maintenance workflow revision' {
     BeforeAll {
         $publisher = Join-Path $PSScriptRoot '../../bin/published-revision.ps1'
-        $original = @{
-            GITHUB_REPOSITORY = $env:GITHUB_REPOSITORY
-            GITHUB_REF = $env:GITHUB_REF
-            GITHUB_SHA = $env:GITHUB_SHA
-            GITHUB_OUTPUT = $env:GITHUB_OUTPUT
+        $originalOutput = $env:GITHUB_OUTPUT
+
+        function Invoke-TestGit {
+            & git @args
+            if ($LASTEXITCODE -ne 0) { throw "Git fixture failed: $($args -join ' ')" }
         }
-        function gh { throw 'Unexpected GitHub CLI invocation' }
+
+        function Add-TestCommit($Repository, $Message) {
+            Invoke-TestGit -C $Repository -c 'user.name=Test' -c 'user.email=test@example.org' -c 'commit.gpgsign=false' commit -q --allow-empty -m $Message
+        }
+
+        function Invoke-Publisher($Repository) {
+            Push-Location -LiteralPath $Repository
+            try { & $publisher } finally { Pop-Location }
+        }
     }
 
     BeforeEach {
-        $env:GITHUB_REPOSITORY = 'example/bucket'
-        $env:GITHUB_REF = 'refs/heads/maintenance/review'
-        $env:GITHUB_SHA = 'a' * 40
-        $env:GITHUB_OUTPUT = Join-Path $TestDrive "step output $([guid]::NewGuid())"
+        $root = Join-Path $TestDrive ([guid]::NewGuid().ToString())
+        $null = [IO.Directory]::CreateDirectory($root)
+        $origin = Join-Path $root 'origin'
+        $other = Join-Path $root 'other'
+        $bot = Join-Path $root 'bot'
+        $env:GITHUB_OUTPUT = Join-Path $root 'output'
+        Invoke-TestGit init -q --bare -b master $origin
+        Invoke-TestGit init -q -b master $other
+        Add-TestCommit $other 'initial'
+        Invoke-TestGit -C $other remote add origin $origin
+        Invoke-TestGit -C $other push -q origin master
+        Invoke-TestGit clone -q $origin $bot
+        Invoke-TestGit -C $bot config --local core.logAllRefUpdates true
     }
 
-    AfterAll {
-        foreach ($name in $original.Keys) {
-            Set-Item -LiteralPath "Env:$name" -Value $original[$name]
+    AfterAll { $env:GITHUB_OUTPUT = $originalOutput }
+
+    It 'exports the exact direct push even when another writer advances the remote' {
+        Add-TestCommit $bot 'Excavator update'
+        Invoke-TestGit -C $bot push -q origin master
+        $published = Invoke-TestGit -C $bot rev-parse HEAD
+        Invoke-TestGit -C $other pull -q --ff-only origin master
+        Add-TestCommit $other 'concurrent update'
+        Invoke-TestGit -C $other push -q origin master
+        Invoke-Publisher $bot
+        (Get-Content -LiteralPath $env:GITHUB_OUTPUT) -join ',' | Should -Be "revision=$published,published_ref=refs/heads/master"
+        (Invoke-TestGit -C $other rev-parse HEAD) | Should -Not -Be $published
+    }
+
+    It 'ignores commits obtained from fetch and commits from a rejected push' {
+        Add-TestCommit $other 'concurrent update'
+        Invoke-TestGit -C $other push -q origin master
+        Invoke-TestGit -C $bot pull -q --ff-only origin master
+        Invoke-Publisher $bot
+        Test-Path -LiteralPath $env:GITHUB_OUTPUT | Should -BeFalse
+
+        Add-TestCommit $other 'advance again'
+        Invoke-TestGit -C $other push -q origin master
+        Add-TestCommit $bot 'stale bot update'
+        $exitCode = & {
+            $ErrorActionPreference = 'Continue'
+            $PSNativeCommandUseErrorActionPreference = $false
+            git -C $bot push -q origin master 2>$null
+            $LASTEXITCODE
         }
-    }
-
-    It 'exports only a different valid commit SHA' {
-        Mock gh { $global:LASTEXITCODE = 0; 'b' * 40 }
-        & $publisher
-        Get-Content -LiteralPath $env:GITHUB_OUTPUT | Should -Be "revision=$('b' * 40)"
-    }
-
-    It 'leaves the workflow output unset for an unchanged branch' {
-        Mock gh { $global:LASTEXITCODE = 0; $env:GITHUB_SHA }
-        & $publisher
+        $exitCode | Should -Not -Be 0
+        Invoke-Publisher $bot
         Test-Path -LiteralPath $env:GITHUB_OUTPUT | Should -BeFalse
     }
 
-    It 'fails without exporting an invalid response or a failed lookup' {
-        Mock gh { $global:LASTEXITCODE = 0; 'invalid' }
-        { & $publisher } | Should -Throw '*Cannot resolve*'
-        Mock gh { $global:LASTEXITCODE = 1; 'b' * 40 }
-        { & $publisher } | Should -Throw '*Cannot resolve*'
+    It 'exports the pushed fallback branch, then omits it if PR creation deleted the ref' {
+        Invoke-TestGit -C $bot checkout -q -b 'hash-fix/fixture'
+        Add-TestCommit $bot 'hash fix'
+        Invoke-TestGit -C $bot push -q origin 'hash-fix/fixture'
+        $published = Invoke-TestGit -C $bot rev-parse HEAD
+        Invoke-Publisher $bot
+        (Get-Content -LiteralPath $env:GITHUB_OUTPUT) -join ',' | Should -Be "revision=$published,published_ref=refs/heads/hash-fix/fixture"
+        Remove-Item -LiteralPath $env:GITHUB_OUTPUT
+        Invoke-TestGit -C $bot push -q origin --delete 'hash-fix/fixture'
+        Invoke-Publisher $bot
         Test-Path -LiteralPath $env:GITHUB_OUTPUT | Should -BeFalse
+    }
+}
+
+Describe 'Maintenance CI status routing' {
+    It 'reports the published SHA with isolated status permissions and concurrency' {
+        $workflows = Join-Path $PSScriptRoot '../../.github/workflows'
+        $maintenance = Get-Content -LiteralPath (Join-Path $workflows 'test-maintenance.yml') -Raw
+        $tests = Get-Content -LiteralPath (Join-Path $workflows 'ci.yml') -Raw
+        $maintenance | Should -Match 'REVISION: \$\{\{ inputs\.revision \}\}'
+        $maintenance | Should -Match 'statuses/\$REVISION'
+        $maintenance | Should -Not -Match 'statuses/\$GITHUB_SHA'
+        $maintenance | Should -Match 'tests:\s+uses: \./\.github/workflows/ci\.yml\s+permissions:\s+contents: read'
+        $maintenance | Should -Match 'status:\s+name:[^\r\n]+\s+needs: tests[\s\S]+?permissions:\s+statuses: write'
+        $tests | Should -Match "group: tests-.+inputs\.revision && 'maintenance' \|\| github\.event_name"
     }
 }

@@ -4,31 +4,38 @@ on:
     # run every 4 hours
     - cron: '20 */4 * * *'
 name: Excavator
+permissions: {}
 jobs:
   excavate:
     name: Excavate
     runs-on: windows-latest
+    if: github.ref_type == 'branch'
+    permissions:
+      contents: write
     outputs:
       revision: ${{ steps.published.outputs.revision }}
+      published_ref: ${{ steps.published.outputs.published_ref }}
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+    - name: Record local push transactions
+      run: git config --local core.logAllRefUpdates true
     - name: Excavate
       uses: ScoopInstaller/GithubActions@5bceeda181721d9d10a18fdcc3ddca6f33467ae6 # v3.0.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SKIP_UPDATED: '1'
-    - name: Find the published branch head
+    - name: Find the revision published by this checkout
       id: published
       if: ${{ !cancelled() }}
       shell: pwsh
-      env:
-        GH_TOKEN: ${{ github.token }}
       run: ./bin/published-revision.ps1
   test-updates:
     needs: excavate
     if: ${{ !cancelled() && needs.excavate.outputs.revision != '' }}
-    uses: ./.github/workflows/ci.yml
+    uses: ./.github/workflows/test-maintenance.yml
     permissions:
       contents: read
+      statuses: write
     with:
       revision: ${{ needs.excavate.outputs.revision }}
+      published_ref: ${{ needs.excavate.outputs.published_ref }}
