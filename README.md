@@ -38,7 +38,7 @@ bucket importer, these tests validate all manifests on every run.
 
 ### Windows installation smoke tests
 
-After static tests pass on a default-branch push or manual run, a single disposable GitHub-hosted
+After static tests pass for a default-branch revision, a single disposable GitHub-hosted
 Windows job installs and uninstalls **Go x64, Go x86, and Zig x64**, checks Scoop's
 installed version/architecture records and executable PE machine types, and runs each installed shim with
 `--help`. Scoop verifies the SHA-256 hashes while downloading. Go ARM64 is
@@ -61,8 +61,20 @@ Scoop root, config, cache and global paths are all isolated in the test director
 `bin/checkver.ps1`, `checkurls.ps1`, `checkhashes.ps1`, `formatjson.ps1`,
 `missing-checkver.ps1` and `auto-pr.ps1` delegate to the installed Scoop (or
 `SCOOP_HOME`) with argument splatting, without evaluating argument strings.
-The existing Excavator schedule and opened-PR handler are preserved. Tests never
-run `checkver -Update` or rewrite manifests.
+Excavator and the issue handler call Tests when the working branch head advances.
+Pushes made with the Actions `GITHUB_TOKEN` do not trigger the usual push workflow.
+The maintenance run records the resulting branch head SHA and the test jobs check out
+that exact revision. Tests never run `checkver -Update` or rewrite manifests.
+
+### Package maintenance
+
+- Before updating or uninstalling VirtualBox through Scoop, remove Oracle VirtualBox
+  through Windows Installed apps. Oracle's Windows installer requires a custom
+  installation directory with restricted parent-directory permissions.
+- Before reinstalling or migrating Niconicome, close it normally and back up
+  `niconicome.db` in both the active app directory and Scoop's persist directory.
+  If either location contains a `niconicome-log.db` journal, include it in the
+  backup. Niconicome is pinned to 0.11.0 while prerelease migration is unverified.
 
 ### Comment verification security
 

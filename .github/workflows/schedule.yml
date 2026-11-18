@@ -8,6 +8,8 @@ jobs:
   excavate:
     name: Excavate
     runs-on: windows-latest
+    outputs:
+      revision: ${{ steps.published.outputs.revision }}
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
     - name: Excavate
@@ -15,3 +17,18 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SKIP_UPDATED: '1'
+    - name: Find the published branch head
+      id: published
+      if: ${{ !cancelled() }}
+      shell: pwsh
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: ./bin/published-revision.ps1
+  test-updates:
+    needs: excavate
+    if: ${{ !cancelled() && needs.excavate.outputs.revision != '' }}
+    uses: ./.github/workflows/ci.yml
+    permissions:
+      contents: read
+    with:
+      revision: ${{ needs.excavate.outputs.revision }}

@@ -62,3 +62,49 @@ Describe 'Test runner failure guards' {
         $probe.ExitCode | Should -Not -Be 0
     }
 }
+
+Describe 'Maintenance workflow revision' {
+    BeforeAll {
+        $publisher = Join-Path $PSScriptRoot '../../bin/published-revision.ps1'
+        $original = @{
+            GITHUB_REPOSITORY = $env:GITHUB_REPOSITORY
+            GITHUB_REF = $env:GITHUB_REF
+            GITHUB_SHA = $env:GITHUB_SHA
+            GITHUB_OUTPUT = $env:GITHUB_OUTPUT
+        }
+        function gh { throw 'Unexpected GitHub CLI invocation' }
+    }
+
+    BeforeEach {
+        $env:GITHUB_REPOSITORY = 'example/bucket'
+        $env:GITHUB_REF = 'refs/heads/maintenance/review'
+        $env:GITHUB_SHA = 'a' * 40
+        $env:GITHUB_OUTPUT = Join-Path $TestDrive "step output $([guid]::NewGuid())"
+    }
+
+    AfterAll {
+        foreach ($name in $original.Keys) {
+            Set-Item -LiteralPath "Env:$name" -Value $original[$name]
+        }
+    }
+
+    It 'exports only a different valid commit SHA' {
+        Mock gh { $global:LASTEXITCODE = 0; 'b' * 40 }
+        & $publisher
+        Get-Content -LiteralPath $env:GITHUB_OUTPUT | Should -Be "revision=$('b' * 40)"
+    }
+
+    It 'leaves the workflow output unset for an unchanged branch' {
+        Mock gh { $global:LASTEXITCODE = 0; $env:GITHUB_SHA }
+        & $publisher
+        Test-Path -LiteralPath $env:GITHUB_OUTPUT | Should -BeFalse
+    }
+
+    It 'fails without exporting an invalid response or a failed lookup' {
+        Mock gh { $global:LASTEXITCODE = 0; 'invalid' }
+        { & $publisher } | Should -Throw '*Cannot resolve*'
+        Mock gh { $global:LASTEXITCODE = 1; 'b' * 40 }
+        { & $publisher } | Should -Throw '*Cannot resolve*'
+        Test-Path -LiteralPath $env:GITHUB_OUTPUT | Should -BeFalse
+    }
+}
