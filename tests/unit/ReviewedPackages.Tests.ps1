@@ -372,25 +372,22 @@ public class EchoBytes {
 
         $exe = Join-Path $testShims 'vboxmanage.exe'
         Test-Path -LiteralPath $exe -PathType Leaf | Should -BeTrue
-        $settings = [Diagnostics.ProcessStartInfo]::new($exe)
+        [byte[]]$payload = 0, 10, 13, 128, 254, 255, 34, 0
+        $inputFile = Join-Path $root 'binary input'
+        $outputFile = Join-Path $root 'binary output'
+        [IO.File]::WriteAllBytes($inputFile, $payload)
+        # cmd passes file handles directly, without the .NET Framework text writer's BOM.
+        $settings = [Diagnostics.ProcessStartInfo]::new($env:ComSpec)
+        $settings.Arguments = '/d /s /c ""{0}" < "{1}" > "{2}""' -f $exe, $inputFile, $outputFile
         $settings.UseShellExecute = $false
-        $settings.RedirectStandardInput = $true
-        $settings.RedirectStandardOutput = $true
         $process = [Diagnostics.Process]::Start($settings)
-        $output = [IO.MemoryStream]::new()
         try {
-            [byte[]]$payload = 0, 10, 13, 128, 254, 255, 34, 0
-            $process.StandardInput.BaseStream.Write($payload, 0, $payload.Length)
-            $process.StandardInput.BaseStream.Close()
-            $copy = $process.StandardOutput.BaseStream.CopyToAsync($output)
             $process.WaitForExit(10000) | Should -BeTrue
-            $copy.Wait(5000) | Should -BeTrue
             $process.ExitCode | Should -Be 37
-            [Convert]::ToBase64String($output.ToArray()) | Should -Be ([Convert]::ToBase64String($payload))
+            [Convert]::ToBase64String([IO.File]::ReadAllBytes($outputFile)) | Should -Be ([Convert]::ToBase64String($payload))
         } finally {
             if (!$process.HasExited) { $process.Kill() }
             $process.Dispose()
-            $output.Dispose()
         }
         rm_shims 'virtualbox' $manifest $false '64bit'
         Test-Path -LiteralPath $exe | Should -BeFalse
