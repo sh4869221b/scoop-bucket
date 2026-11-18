@@ -322,7 +322,7 @@ $registeredCodes
         $fixturePath = Join-Path $dir 'fixture.exe'
         [IO.File]::WriteAllText($fixturePath, 'test fixture')
         $fixture = Get-Item -LiteralPath $fixturePath
-        Mock Get-Item { $fixture } -ParameterFilter { $LiteralPath[0] -like '*\Oracle\VirtualBox\VBoxManage.exe' }
+        Mock Get-Item { $fixture } -ParameterFilter { $LiteralPath -and $LiteralPath[0] -like '*\Oracle\VirtualBox\VBoxManage.exe' }
         & $install
         $expectedSetup = Join-Path $dir 'VBoxSetup.exe'
         Should -Invoke Start-Process -Times 1 -Exactly -ParameterFilter {
@@ -361,7 +361,7 @@ public class EchoBytes {
         & powershell.exe -NoProfile -File $compile $fixturePath
         $LASTEXITCODE | Should -Be 0
         $fixture = Get-Item -LiteralPath $fixturePath
-        Mock Get-Item { $fixture } -ParameterFilter { $LiteralPath[0] -like '*\Oracle\VirtualBox\VBoxManage.exe' }
+        Mock Get-Item { $fixture } -ParameterFilter { $LiteralPath -and $LiteralPath[0] -like '*\Oracle\VirtualBox\VBoxManage.exe' }
         Mock Add-Path {}
         Mock shimdir { $testShims }
         & $install
