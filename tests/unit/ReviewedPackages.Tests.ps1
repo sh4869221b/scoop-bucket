@@ -288,6 +288,7 @@ Describe 'VirtualBox installer and removal' -Skip:$skipWindowsHooks {
         $uninstall = [scriptblock]::Create($manifest.uninstaller.script -join "`n")
         . (Join-Path $env:SCOOP_HOME 'lib/core.ps1')
         . (Join-Path $env:SCOOP_HOME 'lib/install.ps1')
+        . (Join-Path $env:SCOOP_HOME 'lib/manifest.ps1')
         . (Join-Path $env:SCOOP_HOME 'lib/system.ps1')
         function get_shim_path { Join-Path $env:SCOOP_HOME 'supporting/shims/kiennq/shim.exe' }
         function abort($message) { throw $message }
