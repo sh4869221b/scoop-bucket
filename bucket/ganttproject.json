@@ -1,18 +1,9 @@
 {
-    "version": "2.8.11",
+    "version": "3.3.3323",
     "homepage": "https://www.ganttproject.biz/",
-    "license": "GPL-3.0",
-    "extract_dir": "ganttproject-2.8.11-r2396",
-    "url": [
-        "https://github.com/bardsoftware/ganttproject/releases/download/ganttproject-2.8.11/ganttproject-2.8.11-r2396.zip",
-        "https://gist.githubusercontent.com/sh4869221b/03f8e7b6573bb805003789f84b1d5e4e/raw/b3dd7f95f03c451b8e97b9a6fa8db36b993a490d/ganttproject.bat"
-    ],
-    "depends": "",
-    "hash": [
-        "1aa022a3a41bbe407c327e37943acfa9b790564e3f993153019aecfd17bf9c99",
-        "76240353647eec1b122f61df467b509fc5cf5255e7efc564365773025564c67d"
-    ],
-    "bin": "",
+    "license": "GPL-3.0-or-later",
+    "url": "https://github.com/bardsoftware/ganttproject/releases/download/ganttproject-3.3.3323/ganttproject-3.3.3323.zip",
+    "hash": "fa3910fd502bf8b2864cbd2bba8befa3b90a10970e1cade6f81feb1672033626",
     "shortcuts": [
         [
             "ganttproject.bat",
@@ -20,11 +11,12 @@
         ]
     ],
     "checkver": {
-        "url": "https://github.com/bardsoftware/ganttproject/releases",
-        "regex": "ganttproject_(?<version>[\\d\\w.-]+)-(?<rev>r[\\d\\w]+)"
+        "github": "https://api.github.com/repos/bardsoftware/ganttproject/releases/latest",
+        "jsonpath": "$.assets[*].browser_download_url",
+        "regex": "/releases/download/ganttproject-(?<tag>\\d+(?:\\.\\d+)+)/ganttproject-(?<version>\\d+(?:\\.\\d+)+)\\.zip"
     },
     "autoupdate": {
-        "url": "https://github.com/bardsoftware/ganttproject/releases/download/ganttproject-$version/ganttproject-$version-$matchRev.zip",
-        "extract_dir": "ganttproject-$version-$matchRev"
-    }
+        "url": "https://github.com/bardsoftware/ganttproject/releases/download/ganttproject-$matchTag/ganttproject-$version.zip"
+    },
+    "notes": "Install a Java 17 or newer runtime with JavaFX, such as BellSoft Liberica Full JRE, and configure JAVA_HOME or PATH before launching GanttProject."
 }

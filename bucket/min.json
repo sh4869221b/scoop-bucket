@@ -1,12 +1,8 @@
 {
-    "version": "1.24.0",
+    "version": "1.35.8",
     "homepage": "https://minbrowser.github.io/min",
     "license": "Apache-2.0",
-    "extract_dir": "Min-v1.24.0",
-    "url": "https://github.com/minbrowser/min/releases/download/v1.24.0/Min-v1.24.0-win32-x64.zip",
-    "depends": "",
-    "hash": "e00a9d6e7652fd4dd40dda83fb8b316016f21503f25f2a1cb9be88d21c9e5c65",
-    "bin": "",
+    "extract_dir": "Min-v1.35.8",
     "shortcuts": [
         [
             "Min.exe",
@@ -18,6 +14,23 @@
     },
     "autoupdate": {
         "extract_dir": "Min-v$version",
-        "url": "https://github.com/minbrowser/min/releases/download/v$version/Min-v$version-win32-x64.zip"
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/minbrowser/min/releases/download/v$version/Min-v$version-windows.zip"
+            },
+            "arm64": {
+                "url": "https://github.com/minbrowser/min/releases/download/v$version/Min-v$version-windows-arm64.zip"
+            }
+        }
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/minbrowser/min/releases/download/v1.35.8/Min-v1.35.8-windows.zip",
+            "hash": "9964b1832ec4a3cea08cea16073f02a15e4c206f18cdea053bbcfa28d375be22"
+        },
+        "arm64": {
+            "url": "https://github.com/minbrowser/min/releases/download/v1.35.8/Min-v1.35.8-windows-arm64.zip",
+            "hash": "2a4baf370ddde32fd2941a77ed50e35a23a37de7cdab90f6296c8537719e131c"
+        }
     }
 }

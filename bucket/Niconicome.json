@@ -3,26 +3,45 @@
     "homepage": "https://github.com/Hayao-H/Niconicome",
     "license": "MIT",
     "description": "",
-    "hash": "f64df2c0f55d57086076cd450674c8ac09ae9055488fa3074e5114f248a1553d",
-    "url": "https://github.com/Hayao-H/Niconicome/releases/download/v0.11.0/niconicome-win-x64-v0.11.0.zip",
     "extract_dir": "win-x64",
-    "pre_install": "if (-not(Test-Path $persist_dir/niconicome.db)) {Start-Process $dir\\Niconicome.exe -WorkingDirectory $dir;Start-Sleep 10; ps Niconicome | Stop-Process};if (-not(Test-Path $persist_dir/addons)) {New-Item $dir/addons -ItemType Directory}",
-    "depends": "",
+    "pre_install": [
+        "$savedDb = Join-Path $persist_dir \"niconicome.db\"",
+        "$db = Join-Path $dir \"niconicome.db\"",
+        "if (Test-Path -LiteralPath $savedDb -PathType Container) { throw \"The persisted niconicome.db is a directory. Inspect and back it up before retrying.\" }",
+        "# LiteDB 5.0.11 initializes a zero-length file when Niconicome first opens it.",
+        "if (-not (Test-Path -LiteralPath $savedDb) -and -not (Test-Path -LiteralPath $db)) {",
+        "    [System.IO.File]::Open($db, [System.IO.FileMode]::CreateNew).Dispose()",
+        "}"
+    ],
     "persist": [
         "niconicome.db",
         "addons",
         "log",
         "cache"
     ],
-    "bin": "",
-    "checkver": "github",
     "shortcuts": [
         [
             "niconicome.exe",
             "Niconicome"
         ]
     ],
-    "autoupdate": {
-        "url": "https://github.com/Hayao-H/Niconicome/releases/download/v$version/niconicome-win-x64-v$version.zip"
+    "pre_uninstall": [
+        "$db = Join-Path $dir \"niconicome.db\"",
+        "$savedDb = Join-Path $persist_dir \"niconicome.db\"",
+        "$journal = Get-Item -LiteralPath (Join-Path $dir \"niconicome-log.db\") -Force -ErrorAction SilentlyContinue",
+        "if ($journal -and $journal.Length -gt 0) { throw \"Niconicome has a pending database journal. Close Niconicome cleanly and back up its data before retrying.\" }",
+        "if (Test-Path -LiteralPath $db -PathType Leaf) {",
+        "    if (-not (Test-Path -LiteralPath $savedDb -PathType Leaf) -or",
+        "        (Get-FileHash -LiteralPath $db -ErrorAction Stop).Hash -ne (Get-FileHash -LiteralPath $savedDb -ErrorAction Stop).Hash) {",
+        "        throw \"The active Niconicome database differs from Scoop persist. Back up both copies and reconcile them before retrying.\"",
+        "    }",
+        "}"
+    ],
+    "notes": "Version 0.11.0 is pinned pending verification of prerelease database and addon migration. Close Niconicome and back up the active database and Scoop persist before upgrading or reinstalling.",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/Hayao-H/Niconicome/releases/download/v0.11.0/niconicome-win-x64-v0.11.0.zip",
+            "hash": "f64df2c0f55d57086076cd450674c8ac09ae9055488fa3074e5114f248a1553d"
+        }
     }
 }
