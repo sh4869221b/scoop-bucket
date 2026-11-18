@@ -1,5 +1,6 @@
 {
     "version": "1.35.8",
+    "description": "Minimal web browser with tab organization and built-in ad and tracker blocking.",
     "homepage": "https://minbrowser.github.io/min",
     "license": "Apache-2.0",
     "extract_dir": "Min-v1.35.8",

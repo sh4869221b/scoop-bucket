@@ -1,5 +1,6 @@
 {
     "version": "3.3.3323",
+    "description": "Desktop project planning tool for scheduling tasks and visualizing timelines with Gantt charts.",
     "homepage": "https://www.ganttproject.biz/",
     "license": "GPL-3.0-or-later",
     "url": "https://github.com/bardsoftware/ganttproject/releases/download/ganttproject-3.3.3323/ganttproject-3.3.3323.zip",

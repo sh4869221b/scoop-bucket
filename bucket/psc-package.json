@@ -1,5 +1,6 @@
 {
     "version": "0.6.2",
+    "description": "Package manager for PureScript that uses package sets.",
     "homepage": "https://psc-package.readthedocs.io/",
     "license": "https://raw.githubusercontent.com/purescript/psc-package/master/LICENSE",
     "extract_dir": "psc-package",

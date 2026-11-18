@@ -1,5 +1,6 @@
 {
     "version": "26.9.20",
+    "description": "Tabbed Windows file manager with add-on support.",
     "homepage": "https://tablacus.github.io/explorer_en.html",
     "license": "MIT",
     "persist": [

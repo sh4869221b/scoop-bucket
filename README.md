@@ -118,8 +118,8 @@ Use the **Tests** workflow for full schema and unit validation. Authorized
 maintainers can rerun those checks through GitHub's Actions UI. A push during
 comment verification fails the check and requires a new `/verify` comment.
 
-Some older GUI manifests have empty optional `bin` values, and two legacy
-manifests have empty license strings accepted by Scoop's current schema. The
+Some older GUI manifests have empty optional `bin` values, and the legacy
+`chainlp` manifest has an empty license string accepted by Scoop's current schema. The
 suite preserves those existing manifests; the Nico manifests require MIT
 license metadata, nonempty descriptions and their exact supported architectures.
 
