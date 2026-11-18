@@ -123,7 +123,8 @@ Describe 'Verified release assets' {
         $manifest.architecture.arm64.bin[0][0] | Should -Be 'PPSSPPWindowsARM64.exe'
         $manifest.extract_dir | Should -BeNullOrEmpty
         $manifest.persist | Should -Be 'memstick'
-        $page = (ConvertFrom-Json $page | Select-Object -First 3) | ConvertTo-Json -Depth 6
+        $incomplete = (ConvertFrom-Json $page)[0..2]
+        $page = ConvertTo-Json -InputObject $incomplete -Depth 6
         (& $selector) | Should -BeNullOrEmpty
     }
 
@@ -254,11 +255,13 @@ Describe 'Niconicome persistence' {
 }
 
 Describe 'Windows Installer inventory API' -Skip:$skipWindowsHooks {
-    It 'returns a readable empty related-product list for an unused upgrade code' {
-        $installer = New-Object -ComObject WindowsInstaller.Installer -ErrorAction Stop
+    It 'queries an unused upgrade code through the generated native helper' {
+        $manifest = Read-BucketManifest 'virtualbox'
+        $dir = $TestDrive
+        & ([scriptblock]::Create($manifest.pre_install -join "`n"))
+        $inventory = Join-Path $dir 'vbox-msi-inventory.ps1'
         $upgradeCode = [guid]::NewGuid().ToString('B')
-        $products = $installer.RelatedProducts($upgradeCode)
-        $products.Count | Should -Be 0
+        @(& $inventory -UpgradeCode $upgradeCode).Count | Should -Be 0
     }
 }
 
@@ -269,34 +272,29 @@ Describe 'VirtualBox installer and removal' -Skip:$skipWindowsHooks {
         $install = [scriptblock]::Create($manifest.installer.script -join "`n")
         $uninstall = [scriptblock]::Create($manifest.uninstaller.script -join "`n")
         function abort($message) { throw $message }
-
-        function New-MsiInventory([int]$Before, [int]$After, [string]$RegisteredVersion) {
-            $probe = [pscustomobject]@{ Before = $Before; After = $After; RegisteredVersion = $RegisteredVersion; Calls = 0 }
-            $probe | Add-Member ScriptMethod RelatedProducts {
-                param($UpgradeCode)
-                if ($UpgradeCode -ne '{C4BAD770-BFE8-4D2C-A592-693028A7215B}') { throw 'Unexpected MSI family' }
-                $this.Calls++
-                $count = if ($this.Calls -eq 1) { $this.Before } else { $this.After }
-                $products = [pscustomobject]@{ Count = $count }
-                $products | Add-Member ScriptMethod Item { '{D726D65F-25B7-436D-85D5-41310BA0E8EA}' }
-                $products
-            }
-            $probe | Add-Member ScriptMethod ProductInfo { $this.RegisteredVersion }
-            $probe
-        }
     }
 
     BeforeEach {
         $root = Join-Path $TestDrive ([guid]::NewGuid().ToString())
         $dir = Join-Path $root 'folder [with spaces]; and ampersand &'
         $null = [IO.Directory]::CreateDirectory($dir)
-        Mock New-Object { $msiInventory } -ParameterFilter { $ComObject -eq 'WindowsInstaller.Installer' }
+        $probe = Join-Path $dir 'vbox-msi-inventory.ps1'
+        Set-Content -LiteralPath $probe -Value @'
+param([switch]$IncludeVersion)
+if ($IncludeVersion -and $registeredVersion) { $registeredVersion }
+if (-not $IncludeVersion -and $existingProduct) { $existingProduct }
+'@
+        $existingProduct = $null
+        $registeredVersion = $null
         Mock Start-Process { [pscustomobject]@{ ExitCode = 0 } }
     }
 
     It 'installs to the protected default path and creates a CLI shim in Scoop' {
-        $msiInventory = New-MsiInventory 0 1 $version
-        Mock Test-Path { $true } -ParameterFilter { $LiteralPath -like '*\Oracle\VirtualBox\VBoxManage.exe' }
+        $registeredVersion = $version
+        $fixturePath = Join-Path $dir 'fixture.exe'
+        [IO.File]::WriteAllText($fixturePath, 'test fixture')
+        $fixture = Get-Item -LiteralPath $fixturePath
+        Mock Get-Item { $fixture } -ParameterFilter { $LiteralPath[0] -like '*\Oracle\VirtualBox\VBoxManage.exe' }
         & $install
         $expectedSetup = Join-Path $dir 'VBoxSetup.exe'
         Should -Invoke Start-Process -Times 1 -Exactly -ParameterFilter {
@@ -311,31 +309,33 @@ Describe 'VirtualBox installer and removal' -Skip:$skipWindowsHooks {
     }
 
     It 'leaves pre-existing Oracle installs alone and checks failure and MSI registration' {
-        $msiInventory = New-MsiInventory 1 1 $version
+        $existingProduct = 'registered'
         { & $install } | Should -Throw '*existing Oracle VirtualBox installation*'
         Should -Invoke Start-Process -Times 0 -Exactly
 
-        $msiInventory = New-MsiInventory 0 0 $version
+        $existingProduct = $null
         { & $install } | Should -Throw '*Expected Oracle VirtualBox MSI registration*'
 
-        $msiInventory = New-MsiInventory 0 1 $version
+        $registeredVersion = $version
         Mock Start-Process { [pscustomobject]@{ ExitCode = 1603 } }
         { & $install } | Should -Throw '*exit code 1603*'
         Test-Path -LiteralPath (Join-Path $dir $manifest.bin) | Should -BeFalse
     }
 
     It 'blocks Scoop removal based on registration even when the executable is missing' {
-        $msiInventory = New-MsiInventory 1 1 $version
+        $existingProduct = 'registered'
         { & $uninstall } | Should -Throw '*Windows Installed apps*'
-        $msiInventory = New-MsiInventory 0 0 $version
+        $existingProduct = $null
         { & $uninstall } | Should -Not -Throw
         Should -Invoke Start-Process -Times 0 -Exactly
     }
 
-    It 'propagates an MSI inventory error before changing Scoop state' {
-        Mock New-Object { throw 'MSI inventory unavailable' } -ParameterFilter { $ComObject -eq 'WindowsInstaller.Installer' }
+    It 'propagates an MSI inventory error and rejects a missing helper' {
+        Set-Content -LiteralPath $probe -Value "throw 'MSI inventory unavailable'"
         { & $install } | Should -Throw '*inventory unavailable*'
         { & $uninstall } | Should -Throw '*inventory unavailable*'
+        Remove-Item -LiteralPath $probe
+        { & $uninstall } | Should -Throw '*inventory helper is missing*'
         Should -Invoke Start-Process -Times 0 -Exactly
     }
 }
