@@ -361,6 +361,8 @@ public class EchoBytes {
         & powershell.exe -NoProfile -File $compile $fixturePath
         $LASTEXITCODE | Should -Be 0
         $fixture = Get-Item -LiteralPath $fixturePath
+        $getItem = Get-Command Microsoft.PowerShell.Management\Get-Item -CommandType Cmdlet
+        Mock Get-Item { & $getItem -Path $Path -Exclude $Exclude } -ParameterFilter { $Path -and $Exclude }
         Mock Get-Item { $fixture } -ParameterFilter { $LiteralPath -and $LiteralPath[0] -like '*\Oracle\VirtualBox\VBoxManage.exe' }
         Mock Add-Path {}
         Mock shimdir { $testShims }
