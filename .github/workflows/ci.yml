@@ -4,12 +4,22 @@ on:
   pull_request:
   push:
   workflow_dispatch:
+  workflow_call:
+    inputs:
+      revision:
+        description: Commit published by a bucket maintenance workflow
+        required: true
+        type: string
+      published_ref:
+        description: Branch updated by that push
+        required: true
+        type: string
 
 permissions:
   contents: read
 
 concurrency:
-  group: tests-${{ github.workflow }}-${{ github.ref }}
+  group: tests-${{ inputs.revision && 'maintenance' || github.event_name }}-${{ inputs.published_ref || github.ref }}-${{ inputs.revision || github.sha }}
   cancel-in-progress: true
 
 jobs:
@@ -20,6 +30,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ inputs.revision || github.sha }}
           persist-credentials: false
       - name: Test read-only comment verification with mocked API responses
         run: python3 -m unittest discover -s tests/security -v
@@ -39,6 +50,7 @@ jobs:
       - name: Checkout bucket
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ inputs.revision || github.sha }}
           path: my_bucket
           persist-credentials: false
       - name: Checkout Scoop schema and validator
@@ -69,7 +81,7 @@ jobs:
     name: Nico Windows install and uninstall
     # Only trusted default-branch commits may download and execute package binaries.
     # PRs still receive all static/schema/unit tests above, with a read-only token.
-    if: github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    if: github.event_name != 'pull_request' && (inputs.published_ref || github.ref) == format('refs/heads/{0}', github.event.repository.default_branch)
     needs: test
     runs-on: windows-latest
     timeout-minutes: 20
@@ -80,6 +92,7 @@ jobs:
       - name: Checkout bucket
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ inputs.revision || github.sha }}
           path: my_bucket
           persist-credentials: false
       - name: Checkout pinned Scoop

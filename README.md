@@ -38,7 +38,7 @@ bucket importer, these tests validate all manifests on every run.
 
 ### Windows installation smoke tests
 
-After static tests pass on a default-branch push or manual run, a single disposable GitHub-hosted
+After static tests pass for a default-branch revision, a single disposable GitHub-hosted
 Windows job installs and uninstalls **Go x64, Go x86, and Zig x64**, checks Scoop's
 installed version/architecture records and executable PE machine types, and runs each installed shim with
 `--help`. Scoop verifies the SHA-256 hashes while downloading. Go ARM64 is
@@ -61,8 +61,52 @@ Scoop root, config, cache and global paths are all isolated in the test director
 `bin/checkver.ps1`, `checkurls.ps1`, `checkhashes.ps1`, `formatjson.ps1`,
 `missing-checkver.ps1` and `auto-pr.ps1` delegate to the installed Scoop (or
 `SCOOP_HOME`) with argument splatting, without evaluating argument strings.
-The existing Excavator schedule and opened-PR handler are preserved. Tests never
-run `checkver -Update` or rewrite manifests.
+Pushes made with the Actions `GITHUB_TOKEN` skip the usual push workflow.
+Excavator and the issue handler take the submitted SHA from Git's local
+`update by push` record, including a successfully published hash-fix PR branch.
+Tests check out that SHA with read-only access. A separate job sets the
+`Tests / maintenance` commit status on the submitted SHA and links the run.
+Maintenance and ordinary push runs use independent concurrency groups.
+Tests never run `checkver -Update` or rewrite manifests.
+
+### Package maintenance
+
+- VirtualBox installs to Oracle's protected Program Files location. Oracle provides
+  the Start menu entry and Scoop provides the native `VBoxManage.exe` shim. Before a
+  Scoop update or uninstall, close VirtualBox, back up or shut down your VMs as
+  appropriate, and remove the Oracle VirtualBox installation that Scoop recorded through
+  Windows Installed apps. Do this first for older bucket installs too.
+  Oracle classifies Windows 11 ARM64 host support as experimental.
+
+#### Moving data from an older Niconicome install
+
+Scoop uses the saved manifest for update and uninstall hooks. Uninstall and
+cleanup can remove old version directories that still hold the only copy of
+your data. Complete this backup before updating, uninstalling, or running
+`scoop cleanup`.
+
+1. Close Niconicome normally. Use `scoop prefix Niconicome` to locate your Scoop
+   root and inspect **every** directory under `apps/Niconicome`, including
+   older versions and renamed directories such as `_0.11.0.old` and
+   `_0.11.0.old(1)`. To include hidden directories, run
+   `Get-ChildItem -LiteralPath '<Scoop root>\apps\Niconicome' -Directory -Force`.
+   If `current` is a junction, check its target and include that target if it
+   isn't already in the list. Check both Scoop roots if you have local and global
+   installs.
+2. In a new backup location outside Scoop, make a separate folder for each source
+   directory. Copy `downloaded`, `backups`, `chrome`, `niconicome.db`, and
+   `niconicome-log.db` wherever they exist, including saved `.original` copies.
+   Back up `persist/Niconicome` and any custom download locations separately.
+   Keep each database beside its own journal. Verify the copied files are
+   readable and compare file counts and sizes with every source before proceeding.
+3. Install or reinstall with the updated manifest. Before opening Niconicome,
+   restore missing files to the new persisted `downloaded`, `backups`, and
+   `chrome` folders. Keep conflicting copies separate until you can choose the
+   correct one. If the databases differ or a journal is present, resolve which
+   database and journal pair to restore before launching. Keep the independent
+   backup until you've checked the library, downloads, backups and custom styles.
+
+Niconicome remains at 0.11.0 while prerelease migration is unverified.
 
 ### Comment verification security
 
@@ -74,8 +118,8 @@ Use the **Tests** workflow for full schema and unit validation. Authorized
 maintainers can rerun those checks through GitHub's Actions UI. A push during
 comment verification fails the check and requires a new `/verify` comment.
 
-Some older GUI manifests have empty optional `bin` values, and two legacy
-manifests have empty license strings accepted by Scoop's current schema. The
+Some older GUI manifests have empty optional `bin` values, and the legacy
+`chainlp` manifest has an empty license string accepted by Scoop's current schema. The
 suite preserves those existing manifests; the Nico manifests require MIT
 license metadata, nonempty descriptions and their exact supported architectures.
 

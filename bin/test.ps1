@@ -19,5 +19,12 @@ $config = New-PesterConfiguration -Hashtable @{
 $result = Invoke-Pester -Configuration $config
 Write-Host "Test totals: $($result.TotalCount); passed: $($result.PassedCount); failed: $($result.FailedCount); skipped: $($result.SkippedCount); not run: $($result.NotRunCount)"
 if ($result.TotalCount -eq 0 -or $result.PassedCount -eq 0 -or $result.Result -ne 'Passed') {
+    if ($env:GITHUB_ACTIONS -eq 'true') {
+        foreach ($failure in $result.Failed) {
+            $messages = ($failure.ErrorRecord | ForEach-Object { $_.Exception.Message }) -join ' '
+            $detail = "$($failure.Name) - $messages".Replace('%', '%25').Replace("`r", '%0D').Replace("`n", '%0A')
+            Write-Host "::error::$detail"
+        }
+    }
     throw 'Tests failed, discovery failed, or no tests passed. See the Pester results above.'
 }

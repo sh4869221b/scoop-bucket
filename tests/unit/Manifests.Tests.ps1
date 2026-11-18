@@ -31,8 +31,9 @@ Describe 'Manifest <Name>' -ForEach $cases {
 
     It 'pairs every architecture download with a SHA-256 hash' {
         foreach ($variant in $variants) {
-            $urls = @($variant.url)
-            $hashes = @($variant.hash)
+            # A shared download may have architecture-specific shortcuts.
+            $urls = if ($variant.url) { @($variant.url) } else { @($manifest.url) }
+            $hashes = if ($variant.hash) { @($variant.hash) } else { @($manifest.hash) }
             $urls.Count | Should -BeGreaterThan 0
             $hashes.Count | Should -Be $urls.Count
             foreach ($url in $urls) { $url | Should -Match '^https?://[^/\s]+' }
