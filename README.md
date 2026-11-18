@@ -72,33 +72,39 @@ Tests never run `checkver -Update` or rewrite manifests.
 ### Package maintenance
 
 - VirtualBox installs to Oracle's protected Program Files location. Oracle provides
-  the Start menu entry and Scoop provides the `VBoxManage` shim. Before a Scoop
-  update or uninstall, close VirtualBox, back up or shut down your VMs as
-  appropriate, and remove the registered Oracle VirtualBox product through
+  the Start menu entry and Scoop provides the native `VBoxManage.exe` shim. Before a
+  Scoop update or uninstall, close VirtualBox, back up or shut down your VMs as
+  appropriate, and remove the Oracle VirtualBox installation that Scoop recorded through
   Windows Installed apps. Do this first for older bucket installs too.
   Oracle classifies Windows 11 ARM64 host support as experimental.
 
 #### Moving data from an older Niconicome install
 
-Scoop runs the previously saved manifest's cleanup hooks on update and uninstall.
-Prepare a separate backup before running either command, even if the bucket
-already lists `downloaded` and `backups` as persisted.
+Scoop uses the saved manifest for update and uninstall hooks. Uninstall and
+cleanup can remove old version directories that still hold the only copy of
+your data. Complete this backup before updating, uninstalling, or running
+`scoop cleanup`.
 
-1. Close Niconicome normally. Find the active app folder with
-   `scoop prefix Niconicome` and locate `persist/Niconicome` in the same Scoop
-   root. For a global install, use that installation's global Scoop root.
-2. Copy the contents of the active app's `downloaded` and `backups` folders,
-   the persisted folder, and any custom download location to a backup location
-   outside Scoop. Keep separate copies of `niconicome.db` from the active and
-   persisted folders, each with its own `niconicome-log.db` if present. Check that
-   the copies are readable and include the expected files.
+1. Close Niconicome normally. Use `scoop prefix Niconicome` to locate your Scoop
+   root and inspect **every** directory under `apps/Niconicome`, including
+   older versions and renamed directories such as `_0.11.0.old` and
+   `_0.11.0.old.1`. To include hidden directories, run
+   `Get-ChildItem -LiteralPath '<Scoop root>\apps\Niconicome' -Directory -Force`.
+   If `current` is a junction, check its target and include that target if it
+   isn't already in the list. Check both Scoop roots if you have local and global
+   installs.
+2. In a new backup location outside Scoop, make a separate folder for each source
+   directory. Copy `downloaded`, `backups`, `chrome`, `niconicome.db`, and
+   `niconicome-log.db` wherever they exist, including saved `.original` copies.
+   Back up `persist/Niconicome` and any custom download locations separately.
+   Keep each database beside its own journal. Verify the copied files are
+   readable and compare file counts and sizes with every source before proceeding.
 3. Install or reinstall with the updated manifest. Before opening Niconicome,
-   restore missing downloads and backups into the new persisted `downloaded`
-   and `backups` folders. Review conflicting files and keep both copies until
-   resolved. If the databases differ or a journal is present, retain the
-   database and journal together and resolve which copy to restore before
-   starting the new install. Keep the independent backup until you've checked
-   the library, downloads and backup list in Niconicome.
+   restore missing files to the new persisted `downloaded`, `backups`, and
+   `chrome` folders. Keep conflicting copies separate until you can choose the
+   correct one. If the databases differ or a journal is present, resolve which
+   database and journal pair to restore before launching. Keep the independent
+   backup until you've checked the library, downloads, backups and custom styles.
 
 Niconicome remains at 0.11.0 while prerelease migration is unverified.
 

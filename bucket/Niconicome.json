@@ -19,7 +19,8 @@
         "log",
         "cache",
         "downloaded",
-        "backups"
+        "backups",
+        "chrome"
     ],
     "shortcuts": [
         [
@@ -40,7 +41,7 @@
         "}"
     ],
     "notes": [
-        "Before updating, reinstalling or uninstalling an older Scoop install, close Niconicome and copy its downloads, backups, database and its journal (if present) to a separate location outside Scoop.",
+        "Before updating, reinstalling, uninstalling or cleaning up an older Scoop install, close Niconicome and back up downloaded, backups, chrome, the database and its journal (if present) from every version directory and Scoop persist. Keep separate copies outside Scoop.",
         "Scoop uses the existing installed manifest for cleanup. Follow the Niconicome migration steps in the bucket README before running Scoop commands.",
         "Version 0.11.0 is pinned pending verification of prerelease database and addon migration."
     ],

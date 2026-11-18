@@ -128,6 +128,15 @@ Describe 'Verified release assets' {
         (& $selector) | Should -BeNullOrEmpty
     }
 
+    It 'ignores PPSSPP responses that cannot contain a build list' {
+        $manifest = Read-BucketManifest 'ppsspp-dev'
+        $selector = [scriptblock]::Create($manifest.checkver.script -join "`n")
+        foreach ($page in '<html>Bad Gateway</html>', '[{"description":', '{"builds":[]}', '', $null) {
+            $result = & $selector
+            $result | Should -BeNullOrEmpty
+        }
+    }
+
     It 'uses Scoop SHA-256 discovery and downloads for psc-package' {
         $manifest = Read-BucketManifest 'psc-package'
         $manifest.architecture.'64bit'.hash | Should -Match '^[0-9a-f]{64}$'
@@ -217,14 +226,18 @@ Describe 'Niconicome persistence' {
         $manifest.autoupdate | Should -BeNullOrEmpty
     }
 
-    It 'persists downloads and backups and documents migration from the saved manifest' {
+    It 'persists downloads, backups and styles and documents migration from every version' {
         $manifest.persist | Should -Contain 'downloaded'
         $manifest.persist | Should -Contain 'backups'
+        $manifest.persist | Should -Contain 'chrome'
         $manifest.notes -join ' ' | Should -Match 'outside Scoop'
         $manifest.notes -join ' ' | Should -Match 'existing installed manifest'
+        $readme = Get-Content -LiteralPath (Join-Path $PSScriptRoot '../../README.md') -Raw
+        $readme | Should -Match '_0\.11\.0\.old'
+        $readme | Should -Match 'separate folder for each source'
     }
 
-    It 'keeps downloads and backups after Scoop unlinks and removes the app directory' -Skip:$skipWindowsHooks {
+    It 'keeps downloads, backups and styles after Scoop unlinks and removes the app directory' -Skip:$skipWindowsHooks {
         . (Join-Path $env:SCOOP_HOME 'lib/core.ps1')
         . (Join-Path $env:SCOOP_HOME 'lib/install.ps1')
         $dir = Join-Path $root 'app'
@@ -232,7 +245,7 @@ Describe 'Niconicome persistence' {
         $null = [IO.Directory]::CreateDirectory($dir)
         & $preInstall
 
-        $folders = 'downloaded', 'backups'
+        $folders = 'downloaded', 'backups', 'chrome'
         foreach ($name in $folders) {
             $source = Join-Path $dir $name
             $null = [IO.Directory]::CreateDirectory($source)
@@ -255,13 +268,15 @@ Describe 'Niconicome persistence' {
 }
 
 Describe 'Windows Installer inventory API' -Skip:$skipWindowsHooks {
-    It 'queries an unused upgrade code through the generated native helper' {
+    It 'queries unused upgrade and product codes through the generated native helper' {
         $manifest = Read-BucketManifest 'virtualbox'
         $dir = $TestDrive
         & ([scriptblock]::Create($manifest.pre_install -join "`n"))
         $inventory = Join-Path $dir 'vbox-msi-inventory.ps1'
         $upgradeCode = [guid]::NewGuid().ToString('B')
         @(& $inventory -UpgradeCode $upgradeCode).Count | Should -Be 0
+        $productCode = [guid]::NewGuid().ToString('B').ToUpperInvariant()
+        (& $inventory -ProductCode $productCode) | Should -BeFalse
     }
 }
 
@@ -271,6 +286,10 @@ Describe 'VirtualBox installer and removal' -Skip:$skipWindowsHooks {
         $version = $manifest.version
         $install = [scriptblock]::Create($manifest.installer.script -join "`n")
         $uninstall = [scriptblock]::Create($manifest.uninstaller.script -join "`n")
+        . (Join-Path $env:SCOOP_HOME 'lib/core.ps1')
+        . (Join-Path $env:SCOOP_HOME 'lib/install.ps1')
+        . (Join-Path $env:SCOOP_HOME 'lib/system.ps1')
+        function get_shim_path { Join-Path $env:SCOOP_HOME 'supporting/shims/kiennq/shim.exe' }
         function abort($message) { throw $message }
     }
 
@@ -278,18 +297,26 @@ Describe 'VirtualBox installer and removal' -Skip:$skipWindowsHooks {
         $root = Join-Path $TestDrive ([guid]::NewGuid().ToString())
         $dir = Join-Path $root 'folder [with spaces]; and ampersand &'
         $null = [IO.Directory]::CreateDirectory($dir)
-        $probe = Join-Path $dir 'vbox-msi-inventory.ps1'
+        $probe = Join-Path $root 'inventory-fixture.ps1'
         Set-Content -LiteralPath $probe -Value @'
-param([switch]$IncludeVersion)
-if ($IncludeVersion -and $registeredVersion) { $registeredVersion }
-if (-not $IncludeVersion -and $existingProduct) { $existingProduct }
+param([switch]$IncludeVersion, [string]$ProductCode)
+if ($ProductCode) { return $ProductCode -in $registeredCodes }
+if ($IncludeVersion) {
+    if ($registeredVersion) { [pscustomobject]@{ ProductCode = $recordedCode; Version = $registeredVersion } }
+    return
+}
+$registeredCodes
 '@
-        $existingProduct = $null
+        Copy-Item -LiteralPath $probe -Destination (Join-Path $dir 'vbox-msi-inventory.ps1')
+        $marker = Join-Path $dir 'vbox-product-code.txt'
+        $recordedCode = '{76288C50-744D-46D0-B92F-C07606BDCA08}'
+        $otherCode = '{D90120EB-E008-44B6-91D1-89CB50719A3A}'
+        $registeredCodes = @()
         $registeredVersion = $null
         Mock Start-Process { [pscustomobject]@{ ExitCode = 0 } }
     }
 
-    It 'installs to the protected default path and creates a CLI shim in Scoop' {
+    It 'installs to the protected default path and records the installed MSI code and native shim' {
         $registeredVersion = $version
         $fixturePath = Join-Path $dir 'fixture.exe'
         [IO.File]::WriteAllText($fixturePath, 'test fixture')
@@ -301,19 +328,77 @@ if (-not $IncludeVersion -and $existingProduct) { $existingProduct }
             $FilePath -eq $expectedSetup -and $Verb -eq 'RunAs' -and $Wait -and
             ($ArgumentList -join ' ') -eq '--msiparams "VBOX_START=0 VBOX_INSTALLSTARTMENUENTRIES=1 REBOOT=ReallySuppress" --silent'
         }
-        $manifest.bin | Should -Be 'VBoxManage.ps1'
+        $manifest.bin | Should -Be 'VBoxManage.exe'
         Test-Path -LiteralPath (Join-Path $dir $manifest.bin) -PathType Leaf | Should -BeTrue
-        $target = Get-Content -LiteralPath (Join-Path $dir 'vbox-manage-path.txt')
-        $target | Should -Match '\\Oracle\\VirtualBox\\VBoxManage\.exe$'
-        $target.StartsWith($dir, [StringComparison]::OrdinalIgnoreCase) | Should -BeFalse
+        (Get-FileHash -LiteralPath (Join-Path $dir $manifest.bin)).Hash | Should -Be (Get-FileHash -LiteralPath (get_shim_path)).Hash
+        Get-Content -LiteralPath $marker | Should -Be $recordedCode
+        $target = Get-Content -LiteralPath (Join-Path $dir 'VBoxManage.shim')
+        $target | Should -Match '^path = ".+\\Oracle\\VirtualBox\\VBoxManage\.exe"$'
+    }
+
+    It 'preserves binary stdin, stdout and the exit code through the public exe shim' {
+        $dir = Join-Path $root 'managed app'
+        $testShims = Join-Path $root 'shims'
+        $null = [IO.Directory]::CreateDirectory($dir)
+        Copy-Item -LiteralPath $probe -Destination (Join-Path $dir 'vbox-msi-inventory.ps1')
+        $registeredVersion = $version
+        $fixturePath = Join-Path $root 'native echo.exe'
+        $compile = Join-Path $root 'compile-echo.ps1'
+        Set-Content -LiteralPath $compile -Value @'
+param([string]$Path)
+$ErrorActionPreference = 'Stop'
+Add-Type -OutputAssembly $Path -OutputType ConsoleApplication -TypeDefinition @"
+using System;
+public class EchoBytes {
+    public static int Main() {
+        Console.OpenStandardInput().CopyTo(Console.OpenStandardOutput());
+        return 37;
+    }
+}
+"@
+'@
+        & powershell.exe -NoProfile -File $compile $fixturePath
+        $LASTEXITCODE | Should -Be 0
+        $fixture = Get-Item -LiteralPath $fixturePath
+        Mock Get-Item { $fixture } -ParameterFilter { $LiteralPath[0] -like '*\Oracle\VirtualBox\VBoxManage.exe' }
+        Mock Add-Path {}
+        Mock shimdir { $testShims }
+        & $install
+        ('path = "{0}"' -f $fixturePath) | Out-UTF8File (Join-Path $dir 'VBoxManage.shim')
+        create_shims $manifest $dir $false '64bit'
+
+        $exe = Join-Path $testShims 'vboxmanage.exe'
+        Test-Path -LiteralPath $exe -PathType Leaf | Should -BeTrue
+        $settings = [Diagnostics.ProcessStartInfo]::new($exe)
+        $settings.UseShellExecute = $false
+        $settings.RedirectStandardInput = $true
+        $settings.RedirectStandardOutput = $true
+        $process = [Diagnostics.Process]::Start($settings)
+        $output = [IO.MemoryStream]::new()
+        try {
+            [byte[]]$payload = 0, 10, 13, 128, 254, 255, 34, 0
+            $process.StandardInput.BaseStream.Write($payload, 0, $payload.Length)
+            $process.StandardInput.BaseStream.Close()
+            $copy = $process.StandardOutput.BaseStream.CopyToAsync($output)
+            $process.WaitForExit(10000) | Should -BeTrue
+            $copy.Wait(5000) | Should -BeTrue
+            $process.ExitCode | Should -Be 37
+            [Convert]::ToBase64String($output.ToArray()) | Should -Be ([Convert]::ToBase64String($payload))
+        } finally {
+            if (!$process.HasExited) { $process.Kill() }
+            $process.Dispose()
+            $output.Dispose()
+        }
+        rm_shims 'virtualbox' $manifest $false '64bit'
+        Test-Path -LiteralPath $exe | Should -BeFalse
     }
 
     It 'leaves pre-existing Oracle installs alone and checks failure and MSI registration' {
-        $existingProduct = 'registered'
+        $registeredCodes = @($recordedCode)
         { & $install } | Should -Throw '*existing Oracle VirtualBox installation*'
         Should -Invoke Start-Process -Times 0 -Exactly
 
-        $existingProduct = $null
+        $registeredCodes = @()
         { & $install } | Should -Throw '*Expected Oracle VirtualBox MSI registration*'
 
         $registeredVersion = $version
@@ -322,19 +407,27 @@ if (-not $IncludeVersion -and $existingProduct) { $existingProduct }
         Test-Path -LiteralPath (Join-Path $dir $manifest.bin) | Should -BeFalse
     }
 
-    It 'blocks Scoop removal based on registration even when the executable is missing' {
-        $existingProduct = 'registered'
+    It 'blocks cleanup only while the recorded MSI code exists, even when the executable is missing' {
+        Set-Content -LiteralPath $marker -Value $recordedCode
+        $registeredCodes = @($recordedCode, $otherCode)
         { & $uninstall } | Should -Throw '*Windows Installed apps*'
-        $existingProduct = $null
+        $registeredCodes = @($otherCode)
+        { & $uninstall } | Should -Not -Throw
+        $registeredCodes = @()
         { & $uninstall } | Should -Not -Throw
         Should -Invoke Start-Process -Times 0 -Exactly
     }
 
-    It 'propagates an MSI inventory error and rejects a missing helper' {
-        Set-Content -LiteralPath $probe -Value "throw 'MSI inventory unavailable'"
+    It 'rejects broken inventory and missing or invalid ProductCode records' {
+        { & $uninstall } | Should -Throw '*vbox-product-code.txt*'
+        Set-Content -LiteralPath $marker -Value 'invalid'
+        { & $uninstall } | Should -Throw '*Invalid VirtualBox ProductCode*'
+        Set-Content -LiteralPath $marker -Value $recordedCode
+        $installedProbe = Join-Path $dir 'vbox-msi-inventory.ps1'
+        Set-Content -LiteralPath $installedProbe -Value "throw 'MSI inventory unavailable'"
         { & $install } | Should -Throw '*inventory unavailable*'
         { & $uninstall } | Should -Throw '*inventory unavailable*'
-        Remove-Item -LiteralPath $probe
+        Remove-Item -LiteralPath $installedProbe
         { & $uninstall } | Should -Throw '*inventory helper is missing*'
         Should -Invoke Start-Process -Times 0 -Exactly
     }

@@ -146,6 +146,23 @@ Describe 'Maintenance workflow revision' {
         Invoke-Publisher $bot
         Test-Path -LiteralPath $env:GITHUB_OUTPUT | Should -BeFalse
     }
+
+    It 'returns zero to the workflow shell when the local branch has no remote-tracking ref' {
+        Invoke-TestGit -C $bot checkout -q -b 'never-published'
+        $shell = (Get-Process -Id $PID).Path
+        $step = Join-Path $root 'workflow-step.ps1'
+        Set-Content -LiteralPath $step -Value @'
+param($Repository, $Publisher)
+Set-Location -LiteralPath $Repository
+$ErrorActionPreference = 'Stop'
+$PSNativeCommandUseErrorActionPreference = $true
+& $Publisher
+if (Test-Path variable:LASTEXITCODE) { exit $LASTEXITCODE }
+'@
+        & $shell -NoProfile -File $step $bot $publisher
+        $LASTEXITCODE | Should -Be 0
+        Test-Path -LiteralPath $env:GITHUB_OUTPUT | Should -BeFalse
+    }
 }
 
 Describe 'Maintenance CI status routing' {
