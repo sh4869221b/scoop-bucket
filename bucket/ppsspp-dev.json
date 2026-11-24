@@ -1,13 +1,13 @@
 {
-    "version": "1.20.4-5220",
+    "version": "1.20.4-5245",
     "description": "Development builds of a PlayStation Portable emulator.",
     "homepage": "https://www.ppsspp.org",
     "license": "GPL-2.0-only",
     "persist": "memstick",
     "architecture": {
         "64bit": {
-            "url": "https://builds.ppsspp.org/builds/v1.20.4-5220-gcdf563b85c42/ppsspp_win_v1.20.4-5220-gcdf563b85c42.zip",
-            "hash": "412640aa63e37ecdc1410c8fb0ac4b1ff6e02c829e9602129bbe4651a6a4eb6e",
+            "url": "https://builds.ppsspp.org/builds/v1.20.4-5245-g5890621ce7c8/ppsspp_win_v1.20.4-5245-g5890621ce7c8.zip",
+            "hash": "bfa47ed25d951720e46b80d871bb199af7b3c75949bbff79d38b74088ea79656",
             "bin": [
                 [
                     "PPSSPPWindows64.exe",
@@ -22,8 +22,8 @@
             ]
         },
         "32bit": {
-            "url": "https://builds.ppsspp.org/builds/v1.20.4-5220-gcdf563b85c42/ppsspp_win_v1.20.4-5220-gcdf563b85c42.zip",
-            "hash": "412640aa63e37ecdc1410c8fb0ac4b1ff6e02c829e9602129bbe4651a6a4eb6e",
+            "url": "https://builds.ppsspp.org/builds/v1.20.4-5245-g5890621ce7c8/ppsspp_win_v1.20.4-5245-g5890621ce7c8.zip",
+            "hash": "bfa47ed25d951720e46b80d871bb199af7b3c75949bbff79d38b74088ea79656",
             "bin": [
                 [
                     "PPSSPPWindows.exe",
@@ -38,8 +38,8 @@
             ]
         },
         "arm64": {
-            "url": "https://builds.ppsspp.org/builds/v1.20.4-5220-gcdf563b85c42/PPSSPPWindowsARM64_v1.20.4-5220-gcdf563b85c42.zip",
-            "hash": "067ebf2e6aa1d88092b09229b2318a7a1f5b28f9113d9680974133f290fb28fc",
+            "url": "https://builds.ppsspp.org/builds/v1.20.4-5245-g5890621ce7c8/PPSSPPWindowsARM64_v1.20.4-5245-g5890621ce7c8.zip",
+            "hash": "2f63d2282f37d9fb00a2c8f0e8ef138c8514e0ed681fb3f1066b31845a3ff16c",
             "bin": [
                 [
                     "PPSSPPWindowsARM64.exe",
